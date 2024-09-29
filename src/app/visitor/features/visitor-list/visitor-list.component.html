@@ -3,7 +3,6 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>DNI</th>
@@ -11,17 +10,17 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let visitor of visitors">
-                <td>{{ visitor.id }}</td>
-                <td>{{ visitor.name }}</td>
-                <td>{{ visitor.lastname }}</td>
-                <td>{{ visitor.doc_number }}</td>
-                <td>
-                    <a class="btn btn-primary btn-sm" routerLink="/visitor/{{visitor.id}}">Ver</a>
-                    <a class="btn btn-warning btn-sm" routerLink="/visitor/edit/{{visitor.id}}">Editar</a>
-                    <button class="btn btn-danger btn-sm" (click)="deleteVisitor(visitor.id)">Eliminar</button>
-                </td>
-            </tr>
+            @for (visitor of visitors; track $index) {
+                <tr>
+                    <td>{{ visitor.name }}</td>
+                    <td>{{ visitor.lastName }}</td>
+                    <td>{{ visitor.docNumber }}</td>
+                    <td>
+                        <a class="btn btn-warning btn-sm" routerLink="/visitor/edit/{{visitor.visitorId}}">Editar</a>
+                        <button class="btn btn-danger btn-sm" (click)="deleteVisitor(visitor.visitorId)">Eliminar</button>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
     <a routerLink="/visitor/add" class="btn btn-success">Agregar Visitante</a>

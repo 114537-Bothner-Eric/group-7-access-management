@@ -1,0 +1,65 @@
+<form (ngSubmit)="onSubmit()">
+
+    <div class="form-group mb-3">
+        <label for="authTypeId">Tipo de Autorización</label>
+        <input type="number" class="form-control" id="authTypeId" [(ngModel)]="authorizedRange.auth_type_id"
+            name="auth_type_id" required>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="visitorId">ID del Visitante</label>
+        <input type="number" class="form-control" id="visitorId" [(ngModel)]="authorizedRange.visitor_id"
+            name="visitor_id" required>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="externalId">ID Externo</label>
+        <input type="number" class="form-control" id="externalId" [(ngModel)]="authorizedRange.external_id"
+            name="external_id">
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="dateFrom">Fecha Desde</label>
+        <input type="date" class="form-control" id="dateFrom" [(ngModel)]="authorizedRange.date_from" name="date_from"
+            required>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="dateTo">Fecha Hasta</label>
+        <input type="date" class="form-control" id="dateTo" [(ngModel)]="authorizedRange.date_to" name="date_to"
+            required>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="hourFrom">Hora Desde</label>
+        <input type="time" class="form-control" id="hourFrom" [(ngModel)]="authorizedRange.hour_from" name="hour_from"
+            required>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="hourTo">Hora Hasta</label>
+        <input type="time" class="form-control" id="hourTo" [(ngModel)]="authorizedRange.hour_to" name="hour_to"
+            required>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="dayOfWeeks">Días de la Semana</label>
+        <select multiple class="form-control" id="dayOfWeeks" [(ngModel)]="authorizedRange.day_of_weeks"
+            name="day_of_weeks" required>
+            <option *ngFor="let day of daysOfWeek" [ngValue]="day">{{ day }}</option>
+        </select>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="plotId">ID de la Parcela</label>
+        <input type="number" class="form-control" id="plotId" [(ngModel)]="authorizedRange.plot_id" name="plot_id"
+            required>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="comment">Comentarios</label>
+        <textarea class="form-control" id="comment" [(ngModel)]="authorizedRange.comment" name="comment"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Registrar Rango Autorizado</button>
+</form>

@@ -49,10 +49,12 @@ export class AuthorizedRangeFormComponent {
       'YYYY-MM-DD'
     );
 
+    console.log(this.authorizedRange)
+
     this.authorizedRangeService
       .registerAuthorizedRange(this.authorizedRange)
       .subscribe(() => {
-        this.router.navigate(['/success']);
+        this.router.navigate(['/register-range']);
       });
   }
 }

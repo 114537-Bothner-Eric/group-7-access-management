@@ -3,6 +3,7 @@ import { VisitorListComponent } from './visitor/features/visitor-list/visitor-li
 import { VisitorFormComponent } from './visitor/features/visitor-form/visitor-form.component';
 import { QrComponent } from './qr/features/qr/qr.component';
 import { AuthorizedRangeFormComponent } from './authorization/features/authorized-range-form/authorized-range-form.component';
+import { AccessQueryComponent } from './accesses/features/access-query/access-query.component';
 
 export const routes: Routes = [
   {
@@ -25,10 +26,14 @@ export const routes: Routes = [
     path: 'register-range',
     component: AuthorizedRangeFormComponent,
   },
-  { 
-    path: '', 
-    redirectTo: '/register-range', 
-    pathMatch: 'full' 
+  {
+    path: 'access-query',
+    component: AccessQueryComponent,
+  },
+  {
+    path: '',
+    redirectTo: '/register-range',
+    pathMatch: 'full',
   },
   {
     path: '',

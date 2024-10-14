@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
-import { AuthorizedRange } from '../../models/authorized-range.model';
+import { Component, inject, OnInit } from '@angular/core';
+import { AuthDTO, AuthorizedRange } from '../../models/authorized-range.model';
 import { AuthorizedRangeService } from '../../services/authorized-range.service';
 import { Router } from '@angular/router';
 import moment from 'moment';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthRangeService } from '../../services/auth-range.service';
 
 @Component({
   selector: 'app-authorized-range-form',
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, FormsModule],
   templateUrl: './authorized-range-form.component.html',
 })
-export class AuthorizedRangeFormComponent {
+export class AuthorizedRangeFormComponent{
   authorizedRange: AuthorizedRange = {
     auth_type_id: 0,
     visitor_id: 0,
@@ -36,10 +37,7 @@ export class AuthorizedRangeFormComponent {
     'SUNDAY',
   ];
 
-  constructor(
-    private authorizedRangeService: AuthorizedRangeService,
-    private router: Router
-  ) {}
+  constructor(private authorizedRangeService: AuthorizedRangeService,private router: Router) {}
 
   onSubmit(): void {
     this.authorizedRange.date_from = moment(

@@ -1,0 +1,53 @@
+<h2>Lista de Visitantes y sus Registros</h2>
+<!-- Entrada para cambiar el número de documento -->
+<div>
+    <label for="docNumber">Número de Documento:</label>
+    <input type="number" [(ngModel)]="docNumber" id="docNumber">
+    <button (click)="getAuthRecords()">Buscar</button>
+  </div>
+
+  <table class="table table-striped table-responsive">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Tipo de Visitante</th>
+        <th>Dias</th>
+        <th>Rangos Horarios</th>
+        <th>Activo</th>
+      </tr>
+    </thead>
+    <tbody>
+        @for (auth of authRecords; track $index) {
+            <tr>
+                <td>{{ auth.auth_id}}</td>
+                <td>{{ auth.visitor.name }}</td>
+                <td>{{ auth.visitor.last_name }}</td>
+                <td>{{ auth.visitor_type }}</td>
+                <td>
+                  <ul>
+                    @for (day of auth.auth_ranges; track $index) {
+                        <li>
+                            {{ translateDays(day.day_of_weeks) }}
+                          </li>
+                    }
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    @for (range of auth.auth_ranges; track $index) {
+                        <li>
+                            {{ range.hour_from }} - {{ range.hour_to }}
+                          </li>
+                    }
+                  </ul>
+                </td>
+                <td>{{ auth.is_active ? 'Sí' : 'No' }}</td>
+              </tr>
+            }
+    </tbody>
+    </table>
+
+ 
+

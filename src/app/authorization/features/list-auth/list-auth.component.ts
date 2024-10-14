@@ -16,7 +16,7 @@ export class ListAuthComponent implements OnInit{
   private serviceAuhtRange = inject(AuthRangeService);
 
   authRecords: AuthDTO[] = [];
-  docNumber: number = 0; 
+  docNumber: number | null = null ; 
 
   constructor() {}
   ngOnInit(): void {
@@ -24,13 +24,42 @@ export class ListAuthComponent implements OnInit{
   }
 
   getAuthRecords(): void {
-    this.serviceAuhtRange.getAuhtByDocNumber(this.docNumber).subscribe((data) => {
-      console.log(data)
-      this.authRecords = data;
-    });
+  
+    if (this.docNumber !== null) {
+      this.serviceAuhtRange.getAuhtByDocNumber(this.docNumber).subscribe({
+        next: (data) => {
+          console.log(data);
+          this.authRecords = data;
+        },
+        error: (err) => {
+          console.error('Error fetching auth records:', err);
+        },
+        complete: () => {
+          console.log('Fetch auth records complete.');
+        }
+      });
+    } else {
+      // Si docNumber es null obtiene todos los registros
+      this.serviceAuhtRange.getAllAuths().subscribe({
+        next: (data) => {
+          console.log(data);
+          this.authRecords = data;
+        },
+        error: (err) => {
+          console.error('Error fetching all auth records:', err);
+        },
+        complete: () => {
+          console.log('Fetch all auth records complete.');
+        }
+      });
+    }
   }
 
   translateDays(daysString: string): string {
+
+    if(!daysString){
+      return "No especificado"
+    }
     const daysArray = daysString.split('-').map(day => day.trim());
     const translatedDays = daysArray.map(day => this.translateDay(day));
     return translatedDays.join(', ');
@@ -55,6 +84,23 @@ export class ListAuthComponent implements OnInit{
         return 'Sábado';
       default:
         return day; // Devuelve el día original si no hay coincidencia
+    }
+  }
+
+  translateVisitorType(type : string){
+    switch (type) {
+      case 'VISITOR':
+        return 'Visita';
+      case 'OWNER':
+        return 'Propietario';
+      case 'WORKER':
+        return 'Trabajador';
+      case 'EMPLOYEE':
+        return 'Empleado';
+      case 'SUPPLIER':
+        return 'Proveedor'
+      default:
+        return type;
     }
   }
 

@@ -19,4 +19,8 @@ export class AuthRangeService {
     // Realizamos una petición GET pasando el parámetro de consulta (query param)
     return this.http.get<AuthDTO[]>(this.url, { params });
   }
+
+  getAllAuths(){
+    return this.http.get<AuthDTO[]>(this.url)
+  }
 }

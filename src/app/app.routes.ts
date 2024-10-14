@@ -32,7 +32,7 @@ export const routes: Routes = [
     component: AccessQueryComponent,
   },
   {
-    path: 'auth-list', // Eliminamos el slash inicial
+    path: 'auth-list',
     component: ListAuthComponent,
   },
   {

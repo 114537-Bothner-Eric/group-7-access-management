@@ -17,8 +17,8 @@
                 <th scope="col">Apellido</th>
                 <th scope="col">Tipo de Visitante</th>
                 <th scope="col">Días</th>
-                <th scope="col">Rango de Fecha</th>
-                <th scope="col">Rango Horarios</th>
+                <th scope="col">Rango de Fechas</th>
+                <th scope="col">Rango Horario</th>
             </tr>
         </thead>
         <tbody>
@@ -37,7 +37,7 @@
                             }
                         </ul>
                     </td>
-                    <td>{{ auth.auth_ranges[0].date_from }} - {{ auth.auth_ranges[0].date_to }}</td>
+                    <td>{{ auth.auth_ranges[0].date_from | date: 'dd/MM/yyyy' }} - {{ auth.auth_ranges[0].date_to | date: 'dd/MM/yyyy' }}</td>
                     <td>
                         <ul class="list-unstyled mb-0">
                             @for (range of auth.auth_ranges; track $index) {

@@ -14,14 +14,16 @@ import { AuthRangeService } from '../../services/auth-range.service';
   templateUrl: './authorized-range-form.component.html',
 })
 export class AuthorizedRangeFormComponent{
+  
   authorizedRange: AuthorizedRange = {
-    auth_type_id: 0,
+    //auth_type_id: 0,
+  //  external_id: 0,
     visitor_id: 0,
-    external_id: 0,
-    date_from: '',
-    date_to: '',
-    hour_from: '',
-    hour_to: '',
+    auth_entity_id:null,
+    date_from: null,
+    date_to: null,
+    hour_from: null,
+    hour_to: null,
     day_of_weeks: [],
     plot_id: 0,
     comment: '',
@@ -37,22 +39,38 @@ export class AuthorizedRangeFormComponent{
     'SUNDAY',
   ];
 
-  constructor(private authorizedRangeService: AuthorizedRangeService,private router: Router) {}
+  private authorizedRangeService = inject(AuthorizedRangeService);
+  private router = inject(Router)
+  
+  constructor() {}
 
   onSubmit(): void {
-    this.authorizedRange.date_from = moment(
-      this.authorizedRange.date_from
-    ).format('YYYY-MM-DD');
-    this.authorizedRange.date_to = moment(this.authorizedRange.date_to).format(
-      'YYYY-MM-DD'
-    );
-
-    console.log(this.authorizedRange)
-
-    this.authorizedRangeService
-      .registerAuthorizedRange(this.authorizedRange)
-      .subscribe(() => {
-        this.router.navigate(['/register-range']);
-      });
+    if (!this.authorizedRange.date_from) {
+      this.authorizedRange.date_from = null;
+    } else {
+      this.authorizedRange.date_from = moment(this.authorizedRange.date_from).isValid()
+        ? moment(this.authorizedRange.date_from).format('DD-MM-YYYY')
+        : null;
+    }
+  
+    if (!this.authorizedRange.date_to) {
+      this.authorizedRange.date_to = null;
+    } else {
+      this.authorizedRange.date_to = moment(this.authorizedRange.date_to).isValid()
+        ? moment(this.authorizedRange.date_to).format('DD-MM-YYYY')
+        : null;
+    }
+  
+    console.log(this.authorizedRange);
+  
+    this.authorizedRangeService.registerAuthorizedRange(this.authorizedRange).subscribe({
+      next:(data)=>{
+        alert("Se registro el rango con exito")
+        this.router.navigate(['']);
+      },
+      error: (err)=>{
+        console.error('error: ' , err)
+      }
+    })
   }
 }

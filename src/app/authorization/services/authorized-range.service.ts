@@ -11,9 +11,7 @@ export class AuthorizedRangeService {
 
   constructor(private http: HttpClient) {}
 
-  registerAuthorizedRange(
-    authorizedRange: AuthorizedRange
-  ): Observable<AuthorizedRange> {
+  registerAuthorizedRange(authorizedRange: AuthorizedRange): Observable<AuthorizedRange> {
     return this.http.post<AuthorizedRange>(this.apiUrl, authorizedRange);
   }
 }

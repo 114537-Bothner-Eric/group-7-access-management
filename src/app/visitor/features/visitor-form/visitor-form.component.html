@@ -1,7 +1,7 @@
-<div class="d-flex justify-content-center align-items-center vh-100" style="background-color: #f57c00;">
+<div class="d-flex justify-content-center align-items-center vh-100" style="background-color: #000000;">
     <div class="card p-4 m-3" style="width: 400px; border-radius: 15px;">
         <h4 class="text-center mb-4">Registrar visitante</h4>
-        <form (ngSubmit)="saveVisitor()">
+        <form #form="ngForm" (ngSubmit)="saveVisitor()">
 
             <div class="form-group mb-3">
                 <label for="name" class="form-label">Nombre</label>
@@ -33,15 +33,15 @@
                     required placeholder="ID del propietario">
             </div>
 
-            <div class="form-check mb-4">
+            <!--<div class="form-check mb-4">
                 <input type="checkbox" class="form-check-input" id="is_active" [(ngModel)]="visitor.is_active"
-                    name="is_active">
+                    name="is_active" disabled="disabled">
                 <label for="is_active" class="form-check-label">Activo</label>
-            </div>
+            </div>-->
 
             <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-warning py-2">Guardar</button>
-                <a routerLink="/visitors" class="btn btn-secondary py-2">Cancelar</a>
+                <button type="submit" class="btn btn-primary py-2">Guardar</button>
+                <a routerLink="/visitors" class="btn btn-secondary py-2" (click)="form.reset()">Cancelar</a>
             </div>
         </form>
     </div>

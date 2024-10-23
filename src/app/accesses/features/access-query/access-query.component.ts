@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { AccessService } from '../../services/access.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AccessRecordProcessed, AccessRecordResponse } from '../../models/access-record-response.model';
+import { AccessRecordProcessed, AccessRecordResponse } from '../../models/access-record.model';
 
 @Component({
   selector: 'app-access-query',

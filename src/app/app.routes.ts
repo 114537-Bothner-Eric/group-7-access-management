@@ -41,8 +41,12 @@ export const routes: Routes = [
     component: ListAuthComponent,
   },
   {
+    path: 'access-form',
+    component: AccessFormComponent,
+  },
+  {
     path: '',
     redirectTo: '/visitors',
     pathMatch: 'full',
-  }
+  },
 ];

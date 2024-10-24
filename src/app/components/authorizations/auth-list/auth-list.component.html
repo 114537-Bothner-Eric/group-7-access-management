@@ -1,0 +1,125 @@
+<div class="card card-company">
+
+  <div class="card-header">Lista de Autorizaciones</div>
+
+  <div class="row align-items-center mb-3">
+    <div class="col-sm-12 col-md-8 col-xl-8">
+      <div class="input-group" style="max-width: 280px">
+        <span class="input-group-text" id="search-icon">
+          <i class="bi bi-search"></i>
+        </span>
+        <input
+          type="text"
+          class="form-control"
+          id="filter-text-box"
+          (input)="onFilterTextBoxChanged($event)"
+        />
+      </div>
+    </div>
+    <div
+      class="col-sm-12 col-md-4 col-xl-64 text-xl-center text-center mt-3 mt-md-0 d-flex align-items-center justify-content-end"
+    >
+      <button
+        class="btn btn-success me-2 mb-md-2 mb-xl-0 mt-2 mt-xl-0"
+        (click)="exportToExcel()"
+      >
+        <i class="bi bi-file-earmark-excel"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <table class="table table-sm">
+      <thead>
+      <tr>
+        <th scope="col">Visitante</th>
+        <th scope="col">DNI</th>
+        <th scope="col">Tipo</th>
+        <th scope="col">Rangos</th>
+        <th scope="col">Autorizador</th>
+        <th scope="col">DNI</th>
+        <th scope="col">Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (item of page; track item) {
+          <tr>
+            <td>
+              {{ item.auth_id }}
+            </td>
+            @if (showButtons){
+            <td>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                  ...
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item btn btn-info" (click)="detail(item.auth_id)">Detalle</a></li>
+                  <li><a class="dropdown-item btn btn-info" (click)="edit(item.auth_id)">Editar</a></li>
+                  <li><a class="dropdown-item btn btn-danger" (click)="delete(item.auth_id)"
+                         data-bs-target="#exampleModal" data-bs-toggle="modal">Eliminar</a></li>
+                </ul>
+              </div>
+            </td>
+              }
+          </tr>
+        }
+      </tbody>
+    </table>
+    <table class="table table-sm d-none" id="autorizaciones">
+      <thead>
+      <tr>
+        <th scope="col">Visitante</th>
+        <th scope="col">DNI</th>
+        <th scope="col">Tipo</th>
+        <th scope="col">Rangos</th>
+        <th scope="col">Autorizador</th>
+        <th scope="col">DNI</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (item of list; track item) {
+          <tr>
+            <td>
+              {{ item.auth_id }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <nav>
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 0">
+          <button class="page-link font-company" (click)="changePage(false)">
+            Anterior
+          </button>
+        </li>
+        <li class="page-item" [class.disabled]="lastPage === true">
+          <button class="page-link font-company" (click)="changePage(true)">
+            Siguiente
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+
+    <!--    <div class="modal fade" id="exampleModal" tabindex="-1">-->
+    <!--      <div class="modal-dialog model-dialog-centered">-->
+    <!--        <div class="modal-content">-->
+    <!--          <div class="modal-header">-->
+    <!--            <h5 class="modal-title">Cuidado</h5>-->
+    <!--            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+    <!--          </div>-->
+    <!--          <div class="modal-body">-->
+    <!--            <p>Seguro que desea eliminar el propietario con el nombre {{ownerFirstName}} {{ownerLastName}}?</p>-->
+    <!--          </div>-->
+    <!--          <div class="modal-footer">-->
+    <!--            <button type="button" class="btn btn-danger" (click)="deleteOwner()">Eliminar</button>-->
+    <!--            <button type="button" class="btn btn-primary"data-bs-dismiss="modal" (click)="cleanOwnerId()">Cancelar</button>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
+  </div>
+</div>

@@ -1,0 +1,109 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary border border-3 border-og" id="navCadastre">
+  <div class="container-fluid">
+    <a class="navbar-brand text-color" href="#">Consorcio</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <!-- Autorizaciones -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Autorizaciones
+          </a>
+          <ul class="dropdown-menu">            <a
+            class="nav-link"
+            routerLink="/auth/list"
+            routerLinkActive="active"
+          >Autorizaciones</a
+          >
+            <a
+              class="nav-link"
+              routerLink="/auth/form"
+              routerLinkActive="active"
+            >Cargar Autorización</a
+            >
+          </ul>
+        </li>
+
+        <!-- Accesos -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Accesos
+          </a>
+          <ul class="dropdown-menu">
+            <a
+              class="nav-link"
+              routerLink="/access/list"
+              routerLinkActive="active"
+            >Accesos</a
+            >
+            <a
+              class="nav-link"
+              routerLink="/access/form"
+              routerLinkActive="active"
+            >Cargar Acceso</a
+            >
+          </ul>
+        </li>
+
+        <!-- Visitantes -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Visitantes
+          </a>
+          <ul class="dropdown-menu">
+            <a
+              class="nav-link"
+              routerLink="/visitor/list"
+              routerLinkActive="active"
+            >Visitantes</a
+            >
+            <a
+              class="nav-link"
+              routerLink="/visitor/form"
+              routerLinkActive="active"
+            >Cargar Visitante</a
+            >
+          </ul>
+        </li>
+
+
+        <!-- Entidades (Obras o proveedores) -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Entidades
+          </a>
+          <ul class="dropdown-menu">
+            <a
+              class="nav-link"
+              routerLink="/visitor/list"
+              routerLinkActive="active"
+            >Entidades</a
+            >
+            <a
+              class="nav-link"
+              routerLink="/visitor/form"
+              routerLinkActive="active"
+            >Cargar Entidad</a>
+          </ul>
+        </li>
+
+
+      </div>
+
+      <!-- Botón en el extremo derecho -->
+      <div class="ms-auto">
+        <button class="btn btn-primary" type="button">Login</button>
+      </div>
+    </div>
+  </div>
+</nav>

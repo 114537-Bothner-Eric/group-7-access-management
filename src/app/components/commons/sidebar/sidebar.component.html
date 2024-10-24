@@ -1,0 +1,140 @@
+<aside
+  id="sidebar"
+  class="bg-body-tertiary border border-3 border-og p-3 vh-100 sticky-top"
+>
+  <div class="sidebar-header">
+    <a class="navbar-brand text-color" href="#">Consorcio</a>
+  </div>
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a
+        class="nav-link dropdown-toggle"
+        data-bs-toggle="collapse"
+        href="#authorizationMenu"
+        role="button"
+        aria-expanded="false"
+        aria-controls="ownersMenu"
+      >
+        Autorizaciones
+      </a>
+      <div class="collapse" id="authorizationMenu">
+        <ul class="nav flex-column ms-3">
+          <li>
+            <a
+              class="nav-link"
+              routerLink="/auth/list"
+              routerLinkActive="active"
+              >Autorizaciones</a
+            >
+          </li>
+          <li>
+            <a
+              class="nav-link"
+              routerLink="/auth/form"
+              routerLinkActive="active"
+              >Cargar Autorización</a
+            >
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <li class="nav-item">
+      <a
+        class="nav-link dropdown-toggle"
+        data-bs-toggle="collapse"
+        href="#accessMenu"
+        role="button"
+        aria-expanded="false"
+        aria-controls="plotsMenu"
+      >
+        Accesos
+      </a>
+      <div class="collapse" id="accessMenu">
+        <ul class="nav flex-column ms-3">
+          <li>
+            <a
+              class="nav-link"
+              routerLink="/access/list"
+              routerLinkActive="active"
+              >Accesos</a
+            >
+          </li>
+          <li>
+            <a
+              class="nav-link"
+              routerLink="/access/form"
+              routerLinkActive="active"
+              >Cargar Acceso</a
+            >
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <li class="nav-item">
+      <a
+        class="nav-link dropdown-toggle"
+        data-bs-toggle="collapse"
+        href="#visitorsMenu"
+        role="button"
+        aria-expanded="false"
+        aria-controls="usersMenu"
+      >
+        Visitantes
+      </a>
+      <div class="collapse" id="visitorsMenu">
+        <ul class="nav flex-column ms-3">
+          <li>
+            <a
+              class="nav-link"
+              routerLink="/visitor/list"
+              routerLinkActive="active"
+              >Visitantes</a
+            >
+          </li>
+          <li>
+            <a
+              class="nav-link"
+              routerLink="/visitor/form"
+              routerLinkActive="active"
+              >Cargar Visitante</a
+            >
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link dropdown-toggle"
+        data-bs-toggle="collapse"
+        href="#entityMenu"
+        role="button"
+        aria-expanded="false"
+        aria-controls="usersMenu"
+      >
+        Entidades
+      </a>
+      <div class="collapse" id="entityMenu">
+        <ul class="nav flex-column ms-3">
+          <li>
+            <a
+              class="nav-link"
+              routerLink="/visitor/list"
+              routerLinkActive="active"
+            >Entidades</a
+            >
+          </li>
+          <li>
+            <a
+              class="nav-link"
+              routerLink="/visitor/form"
+              routerLinkActive="active"
+            >Cargar Entidad</a
+            >
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</aside>

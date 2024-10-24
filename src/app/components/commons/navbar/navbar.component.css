@@ -1,0 +1,15 @@
+.text-color {
+    color: #d98b16;
+}
+
+.bg-orange {
+    background-color: #d98b16;
+}
+
+.border-og {
+    border-color: #d98b16;
+}
+
+.navbar {
+    z-index: 1050;
+}

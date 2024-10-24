@@ -5,7 +5,7 @@ import { QrComponent } from './qr/features/qr/qr.component';
 import { AuthorizedRangeFormComponent } from './authorization/features/authorized-range-form/authorized-range-form.component';
 import { AccessQueryComponent } from './accesses/features/access-query/access-query.component';
 import { ListAuthComponent } from './authorization/features/list-auth/list-auth.component';
-import { AccessFormComponent } from './accesses/features/access-form/access-form.component';
+import {AuthorizedFormComponent} from "./authorization/features/authorized-form/authorized-form.component";
 
 export const routes: Routes = [
   {
@@ -31,6 +31,10 @@ export const routes: Routes = [
   {
     path: 'access-query',
     component: AccessQueryComponent,
+  },
+  {
+    path: 'new/auth',
+    component: AuthorizedFormComponent,
   },
   {
     path: 'auth-list',

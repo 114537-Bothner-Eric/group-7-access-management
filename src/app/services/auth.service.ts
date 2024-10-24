@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {VisitorAuthorizationRequest} from "../models/authorizeRequest.model";
 import {Auth} from "../models/authorize.model";
+import {AccessModel} from "../models/access.model";
 
 @Injectable({
   providedIn: 'root'
@@ -23,5 +24,13 @@ export class AuthService {
 
   getAll(): Observable<Auth[]> {
     return this.http.get<Auth[]>(this.apiUrl);
+  }
+
+  createAccess(data: any, userId: string): Observable<AccessModel> {
+    const headers = new HttpHeaders({
+      'x-user-id': userId
+    });
+
+    return this.http.post<AccessModel>(this.apiUrl + '/authorize', data, { headers });
   }
 }

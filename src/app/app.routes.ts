@@ -10,6 +10,7 @@ import {HomeComponent} from "./components/commons/home/home.component";
 import {AccessFormComponent} from "./components/accesses/access-form/access-form.component";
 import {AuthFormComponent} from "./components/authorizations/auth-form/auth-form.component";
 import {AuthListComponent} from "./components/authorizations/auth-list/auth-list.component";
+import {AccessListComponent} from "./components/accesses/access-list/access-list.component";
 
 export const routes: Routes = [
   {
@@ -38,7 +39,7 @@ export const routes: Routes = [
   },
   {
     path: 'access/list',
-    component: AccessQueryComponent,
+    component: AccessListComponent,
   },
   {
     path: 'auth/form',

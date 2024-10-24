@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule} from '@angular/forms';
+import {AccessService} from "../../../services/access.service";
+import {AuthService} from "../../../services/auth.service";
+import Swal from "sweetalert2";
+import {LoginService} from "../../../services/login.service";
 
 @Component({
   selector: 'app-access-form',
@@ -11,37 +15,30 @@ import {FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule} fr
   styleUrl: './access-form.component.css'
 })
 export class AccessFormComponent {
-  authForm: FormGroup = {} as FormGroup;
-  daysOfWeek = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+  accessForm: FormGroup = {} as FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private  loginService : LoginService) {}
 
   ngOnInit(): void {
-    this.authForm = this.fb.group({
-      visitor_type: ['VISITOR', Validators.required],
-      plot_id: [null, Validators.required],
-      visitor_request: this.fb.group({
-        name: ['', Validators.required],
-        last_name: ['', Validators.required],
-        doc_type: ['DNI', Validators.required],
-        doc_number: [null, Validators.required],
-        birth_date: [null, Validators.required],
-      }),
-      auth_range_request: this.fb.group({
-        date_from: [null, Validators.required],
-        date_to: [null, Validators.required],
-        hour_from: ['00:00', Validators.required],
-        hour_to: ['23:59', Validators.required],
-        days_of_week: [[], Validators.required],
-        comment: ['']
-      })
+    this.accessForm = this.fb.group({
+      first_name: ['', Validators.required],
+      last_name: ['', Validators.required],
+      doc_number: [null, Validators.required],
+      action: ['ENTRY', Validators.required], // Nueva acción (ENTRY/SALIDA)
+      vehicle_type: ['', Validators.required], // Tipo de vehículo (CAR/MOTORBIKE/etc.)
+      vehicle_reg: ['', Validators.required], // Matrícula del vehículo
+      vehicle_description: ['', Validators.required], // Descripción detallada del vehículo
+      comments: [''] // Comentarios adicionales
     });
   }
 
   onSubmit() {
-    if (this.authForm.valid) {
-      console.log(this.authForm.value);
-      // Lógica para enviar el formulario
+    if (this.accessForm.valid) {
+      const formData = this.accessForm.value;
+
+      this.authService.createAccess(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
+        Swal.fire('Registro exitoso...', "Se registró correctamente", 'success');
+      });
     }
   }
 

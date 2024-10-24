@@ -2,7 +2,7 @@
 
   <div class="card-header">Lista de Autorizaciones</div>
 
-  <div class="row align-items-center mb-3">
+  <div class="row align-items-center m-3">
     <div class="col-sm-12 col-md-8 col-xl-8">
       <div class="input-group" style="max-width: 280px">
         <span class="input-group-text" id="search-icon">
@@ -35,7 +35,6 @@
         <th scope="col">Visitante</th>
         <th scope="col">DNI</th>
         <th scope="col">Tipo</th>
-        <th scope="col">Rangos</th>
         <th scope="col">Autorizador</th>
         <th scope="col">DNI</th>
         <th scope="col">Acciones</th>
@@ -45,9 +44,20 @@
         @for (item of page; track item) {
           <tr>
             <td>
-              {{ item.auth_id }}
+              {{ item.visitor.name + ' ' + item.visitor.last_name }}
             </td>
-            @if (showButtons){
+            <td>
+              {{ item.visitor.doc_type + ' ' + item.visitor.doc_number }}
+            </td>
+            <td>
+              {{ item.visitor_type }}
+            </td>
+            <td>
+              {{ item.authorizer.name + ' ' + item.authorizer.last_name }}
+            </td>
+            <td>
+              {{ item.authorizer.doc_type + ' ' + item.authorizer.doc_number }}
+            </td>
             <td>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown"
@@ -62,7 +72,6 @@
                 </ul>
               </div>
             </td>
-              }
           </tr>
         }
       </tbody>

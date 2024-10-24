@@ -61,7 +61,7 @@ export class AuthFormComponent implements OnInit {
       hour_from: ['00:00', Validators.required],
       hour_to: ['23:59', Validators.required],
       days_of_week: [[], Validators.required],
-      comment: ['aa']
+      comment: ['']
     });
   }
 

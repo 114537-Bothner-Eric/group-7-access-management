@@ -3,7 +3,7 @@ import {Auth} from "../../../models/authorize.model";
 import {Router} from "@angular/router";
 import {FormBuilder} from "@angular/forms";
 import {AuthService} from "../../../services/auth.service";
-import {LoginService} from "../../../services/login.service";
+import {AuthorizerCompleterService} from "../../../services/authorizer-completer.service";
 import {ExcelService} from "../../../services/excel.service";
 
 @Component({
@@ -20,11 +20,11 @@ export class AuthListComponent implements OnInit {
   showButtons: boolean = true;
   tableName: string = "autorizaciones";
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router: Router, private excelService:ExcelService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private authorizerCompleterService: AuthorizerCompleterService, private router: Router, private excelService:ExcelService) {
   }
 
   currentPage: number = 0
-  pageSize: number = 2
+  pageSize: number = 20
   lastPage: boolean = true
 
   ngOnInit(): void {
@@ -35,11 +35,15 @@ export class AuthListComponent implements OnInit {
 
   getAll() {
     this.authService.getAll().subscribe(data => {
+        data.forEach(data => {
+          data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
+        })
+
+
         this.filteredList = data;
         this.page = this.filteredList.slice(0, this.pageSize)
         this.list = data
         this.list.length > this.pageSize ? this.lastPage = false : this.lastPage = true;
-        console.log(this.list.length)
 
       }
     );
@@ -61,17 +65,6 @@ export class AuthListComponent implements OnInit {
 
   exportToExcel(){
     this.excelService.exportTableToExcel(document.getElementById(this.tableName) as HTMLTableElement, this.tableName);
-  }
-
-  prepareExport(): any{
-   this.showButtons = false
-    let oldPage = this.page
-   this.page = this.filteredList
-    return oldPage
-  }
-  revertExport(oldpage : any ){
-    this.showButtons = true
-    this.page = oldpage
   }
 
   detailOwner(id: number) {

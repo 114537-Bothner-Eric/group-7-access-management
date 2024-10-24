@@ -23,11 +23,21 @@ export interface Visitor {
   is_active: boolean;
 }
 
+export interface Authorizer {
+  id: number;
+  name: string;
+  last_name: string | null;
+  doc_type: string; // Tipo de documento (DNI, etc.)
+  doc_number: number; // Número
+}
+
 // Define la interfaz para tu modelo principal
 export interface Auth {
   auth_id: number;
+  authorizer_id: number;
   plot_id: number | null; // Puede ser null
   visitor: Visitor;
+  authorizer: Authorizer;
   visitor_type: "PROVIDER_ORGANIZATION" | "PROVIDER" | "VISITOR"; // Tipos posibles
   external_id: number | null; // Puede ser null
   auth_ranges: AuthRange[];

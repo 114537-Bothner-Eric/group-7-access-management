@@ -1,134 +1,147 @@
-<div class="card card-company">
-
-  <div class="card-header">Lista de Autorizaciones</div>
-
-  <div class="row align-items-center m-3">
-    <div class="col-sm-12 col-md-8 col-xl-8">
-      <div class="input-group" style="max-width: 280px">
-        <span class="input-group-text" id="search-icon">
-          <i class="bi bi-search"></i>
-        </span>
-        <input
-          type="text"
-          class="form-control"
-          id="filter-text-box"
-          (input)="onFilterTextBoxChanged($event)"
-        />
-      </div>
-    </div>
-    <div
-      class="col-sm-12 col-md-4 col-xl-64 text-xl-center text-center mt-3 mt-md-0 d-flex align-items-center justify-content-end"
-    >
-      <button
-        class="btn btn-success me-2 mb-md-2 mb-xl-0 mt-2 mt-xl-0"
-        (click)="exportToExcel()"
-      >
-        <i class="bi bi-file-earmark-excel"></i>
-      </button>
-    </div>
-  </div>
-
+<app-main-container title="Lista de Autorizaciones">
   <div class="card-body">
-    <table class="table table-sm">
-      <thead>
-      <tr>
-        <th scope="col">Visitante</th>
-        <th scope="col">DNI</th>
-        <th scope="col">Tipo</th>
-        <th scope="col">Autorizador</th>
-        <th scope="col">DNI</th>
-        <th scope="col">Acciones</th>
-      </tr>
-      </thead>
-      <tbody>
-        @for (item of page; track item) {
-          <tr>
-            <td>
-              {{ item.visitor.name + ' ' + item.visitor.last_name }}
-            </td>
-            <td>
-              {{ item.visitor.doc_type + ' ' + item.visitor.doc_number }}
-            </td>
-            <td>
-              {{ item.visitor_type }}
-            </td>
-            <td>
-              {{ item.authorizer.name + ' ' + item.authorizer.last_name }}
-            </td>
-            <td>
-              {{ item.authorizer.doc_type + ' ' + item.authorizer.doc_number }}
-            </td>
-            <td>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                  ...
-                </button>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item btn btn-info" (click)="detail(item.auth_id)">Detalle</a></li>
-                  <li><a class="dropdown-item btn btn-info" (click)="edit(item.auth_id)">Editar</a></li>
-                  <li><a class="dropdown-item btn btn-danger" (click)="delete(item.auth_id)"
-                         data-bs-target="#exampleModal" data-bs-toggle="modal">Eliminar</a></li>
-                </ul>
+    <!-- ESTE COMPONENTE LO VAN A TENER QUE MODIFICAR ES EL DEL BUSCAR, EXPORTAR, ETC -->
+    <!-- @param itemList => Mandan la lista con la cual hacen la tabla
+         @param tableName => Mandan el nombre de la tabla el que definen con #
+         @param tableName => Mandan el nombre de la tabla el que definen con #
+         @param formPath => Van a poner la ruta de su formulario para crear uno nuevo
+         @param dictionaries => En caso de usar diccionarios mandenlos, si no los mandan no pasa nada
+         @param objectName => Hace referencia al nombre de su objeto para guardar el archivo pdf o excel. Ej: 25/10/2024_LOTES
+         -->
+    <app-cadastre-plot-filter-buttons
+      #filterComponent
+      [itemsList]="list"
+      [tableName]="tableName.nativeElement"
+      formPath="/auth/form"
+      [dictionaries]="dictionaries"
+      objectName="AUTORIZACION"></app-cadastre-plot-filter-buttons>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="btn-group me-5" role="group">
+        <div class="d-flex align-items-center">
+          <div class="btn-group me-2">
+            <button type="button" class="btn btn-outline-danger" (click)="changeFilterMode(filterTypes.NOTHING)">
+              <i class="bi bi-x-octagon-fill"></i> Limpiar
+            </button>
+
+            <button type="button" class="btn btn-outline-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-funnel-fill"></i> Filtros
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.VISITOR_TYPE)">Tipo de visitante</a></li>
+              <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.PLOT_ID)">Nro de lote</a></li>
+            </ul>
+          </div>
+
+          @if (applyFilterWithNumber === true || applyFilterWithCombo === true) {
+            <div class="d-flex">
+              @if (applyFilterWithNumber === true) {
+                <input type="number" class="form-control me-2" id="filter-number" [(ngModel)]="filterInput" name="ngModel" placeholder="Número">
+              } @else if (applyFilterWithCombo === true) {
+                <select id="content-filter" class="form-select me-2" [(ngModel)]="filterInput" name="ngModel">
+                  <option disabled selected>Selecciona un filtro</option>
+                  @for (content of contentForFilterCombo; track content) {
+                    <option value="{{content}}">{{content}}</option>
+                  }
+                </select>
+              }
+              <div class="ms-auto">
+                <button class="btn btn-dark" type="button" (click)="confirmFilter()">Buscar</button>
               </div>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-    <table class="table table-sm d-none" id="autorizaciones">
-      <thead>
-      <tr>
-        <th scope="col">Visitante</th>
-        <th scope="col">DNI</th>
-        <th scope="col">Tipo</th>
-        <th scope="col">Rangos</th>
-        <th scope="col">Autorizador</th>
-        <th scope="col">DNI</th>
-      </tr>
-      </thead>
-      <tbody>
-        @for (item of list; track item) {
-          <tr>
-            <td>
-              {{ item.auth_id }}
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-    <nav>
-      <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="currentPage === 0">
-          <button class="page-link font-company" (click)="changePage(false)">
-            Anterior
-          </button>
-        </li>
-        <li class="page-item" [class.disabled]="lastPage === true">
-          <button class="page-link font-company" (click)="changePage(true)">
-            Siguiente
-          </button>
-        </li>
-      </ul>
-    </nav>
+            </div>
+          }
+        </div>
+      </div>
 
 
-    <!--    <div class="modal fade" id="exampleModal" tabindex="-1">-->
-    <!--      <div class="modal-dialog model-dialog-centered">-->
-    <!--        <div class="modal-content">-->
-    <!--          <div class="modal-header">-->
-    <!--            <h5 class="modal-title">Cuidado</h5>-->
-    <!--            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-    <!--          </div>-->
-    <!--          <div class="modal-body">-->
-    <!--            <p>Seguro que desea eliminar el propietario con el nombre {{ownerFirstName}} {{ownerLastName}}?</p>-->
-    <!--          </div>-->
-    <!--          <div class="modal-footer">-->
-    <!--            <button type="button" class="btn btn-danger" (click)="deleteOwner()">Eliminar</button>-->
-    <!--            <button type="button" class="btn btn-primary"data-bs-dismiss="modal" (click)="cleanOwnerId()">Cancelar</button>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
+      <!--      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+              <input type="radio" class="btn-check"
+                     name="btnradio" id="btnradio1"
+                     autocomplete="off" (change)="changeActiveFilter(true)" checked>
+              <label class="btn btn-outline-primary" for="btnradio1">Lotes Activos</label>
+
+              <input type="radio" class="btn-check"
+                     name="btnradio" id="btnradio2"
+                     autocomplete="off" (change)="changeActiveFilter(false)">
+              <label class="btn btn-outline-primary" for="btnradio2">Lotes Inactivos</label>
+
+              <input type="radio" class="btn-check"
+                     name="btnradio" id="btnradio3"
+                     autocomplete="off" (change)="changeActiveFilter()">
+              <label class="btn btn-outline-primary" for="btnradio3">Todos</label>
+            </div>-->
+    </div>
+
+    <div class="table-container">
+      <table class="table table-striped fixed-table" style="border: 1px solid rgba(0, 0, 0, 0.150); border-collapse: collapse;" #table>
+        <thead>
+        <tr>
+          <th scope="col">Nro de Lote</th>
+          <th scope="col">Visitante</th>
+          <th scope="col">DNI</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Horarios</th>
+          <th scope="col">Autorizador</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (item of (filteredList.length ? filteredList : list); track item) {
+
+            <tr>
+              <td>
+                {{ item.plot_id ? item.plot_id : "No aplica" }}
+              </td>
+              <td>
+                <!--TODO icono-->
+                {{ item.visitor.name + ' ' + (item.visitor.last_name ? item.visitor.last_name : '') }}
+              </td>
+              <td>
+                {{ item.visitor.doc_type + ' ' + item.visitor.doc_number }}
+              </td>
+              <td>
+                {{ translateTable(item.visitor_type, typeDictionary) }}
+              </td>
+              <td>
+                {{ transformAuthRanges(item.auth_ranges) }}
+              </td>
+              <td>
+                <!--TODO icono-->
+                {{ item.authorizer.name + ' ' + item.authorizer.last_name }}
+              </td>
+            </tr>
+
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <ngb-pagination
+        [(page)]="currentPage"
+        [pageSize]="pageSize"
+        [collectionSize]="totalItems"
+        (pageChange)="onPageChange($event)"
+        [maxSize]="5"
+        [boundaryLinks]="false"
+      ></ngb-pagination>
+
+      <div class="ms-auto">
+      </div>
+
+      <div class="form-group mb-3 me-2">
+        <select
+          id="itemsPerPage"
+          class="form-select"
+          [(ngModel)]="pageSize"
+          (change)="onItemsPerPageChange()"
+        >
+          @for(option of sizeOptions; track $index) {
+            <option [value]="option">{{ option }} Elementos</option>
+          }
+        </select>
+      </div>
+
+
+    </div>
   </div>
-</div>
+</app-main-container>

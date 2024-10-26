@@ -22,7 +22,7 @@ export class AuthService {
     return this.http.post<VisitorAuthorizationRequest>(this.apiUrl + '/authorization', ownerData, { headers });
   }
 
-  getAll(): Observable<Auth[]> {
+  getAll(page: number, size: number, isActive?: boolean): Observable<Auth[]> {
     return this.http.get<Auth[]>(this.apiUrl);
   }
 

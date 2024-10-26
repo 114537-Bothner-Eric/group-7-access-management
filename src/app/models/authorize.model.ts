@@ -38,8 +38,25 @@ export interface Auth {
   plot_id: number | null; // Puede ser null
   visitor: Visitor;
   authorizer: Authorizer;
-  visitor_type: "PROVIDER_ORGANIZATION" | "PROVIDER" | "VISITOR"; // Tipos posibles
+  visitor_type: string; // Tipos posibles
   external_id: number | null; // Puede ser null
   auth_ranges: AuthRange[];
   is_active: boolean;
+}
+
+export const VisitorTypeAccessDictionary: { [key: string]: string } = {
+  "Visitante": "VISITOR",
+  "Proveedor": "PROVIDER",
+  "Propietario": "OWNER",
+  "Trabajador": "WORKER",
+  "Empleado": "EMPLOYEE",
+  "Conviviente": "COHABITANT",
+  "Emergencia": "EMERGENCY",
+  "Entidad": "PROVIDER_ORGANIZATION",
+};
+
+export enum AuthFilters {
+  NOTHING = 'NOTHING',
+  PLOT_ID = 'Nro de lote',
+  VISITOR_TYPE = 'VISITOR_TYPE'
 }

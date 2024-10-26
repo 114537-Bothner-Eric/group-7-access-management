@@ -1,4 +1,4 @@
-<app-main-container title="Lista de Lotes">
+<app-main-container title="Lista de Accesos">
   <div class="card-body">
     <!-- ESTE COMPONENTE LO VAN A TENER QUE MODIFICAR ES EL DEL BUSCAR, EXPORTAR, ETC -->
     <!-- @param itemList => Mandan la lista con la cual hacen la tabla
@@ -10,11 +10,11 @@
          -->
     <app-cadastre-plot-filter-buttons
       #filterComponent
-      [itemsList]="plotsList"
+      [itemsList]="list"
       [tableName]="tableName.nativeElement"
-      formPath="/plot/form"
-      [dictionaries]="plotDictionaries"
-      objectName="LOTES"></app-cadastre-plot-filter-buttons>
+      formPath="/access/form"
+      [dictionaries]="dictionaries"
+      objectName="ACCESOS"></app-cadastre-plot-filter-buttons>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="btn-group me-5" role="group">
@@ -28,16 +28,15 @@
               <i class="bi bi-funnel-fill"></i> Filtros
             </button>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.BLOCK_NUMBER)">Manzana</a></li>
-              <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.PLOT_STATUS)">Estado de Lote</a></li>
-              <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.PLOT_TYPE)">Tipo de Lote</a></li>
+              <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.VISITOR_TYPE)">Tipo de visitante</a></li>
+              <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.ACTION)">Acción</a></li>
             </ul>
           </div>
 
           @if (applyFilterWithNumber === true || applyFilterWithCombo === true) {
             <div class="d-flex">
               @if (applyFilterWithNumber === true) {
-                <input type="number" class="form-control me-2" id="filter-number" [(ngModel)]="filterInput" name="ngModel" placeholder="Número de Lote">
+                <input type="number" class="form-control me-2" id="filter-number" [(ngModel)]="filterInput" name="ngModel" placeholder="Número">
               } @else if (applyFilterWithCombo === true) {
                 <select id="content-filter" class="form-select me-2" [(ngModel)]="filterInput" name="ngModel">
                   <option disabled selected>Selecciona un filtro</option>
@@ -47,7 +46,7 @@
                 </select>
               }
               <div class="ms-auto">
-                <button class="btn btn-dark" type="button" (click)="confirmFilterPlot()">Buscar</button>
+                <button class="btn btn-dark" type="button" (click)="confirmFilter()">Buscar</button>
               </div>
             </div>
           }
@@ -55,7 +54,7 @@
       </div>
 
 
-      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+<!--      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
         <input type="radio" class="btn-check"
                name="btnradio" id="btnradio1"
                autocomplete="off" (change)="changeActiveFilter(true)" checked>
@@ -70,76 +69,52 @@
                name="btnradio" id="btnradio3"
                autocomplete="off" (change)="changeActiveFilter()">
         <label class="btn btn-outline-primary" for="btnradio3">Todos</label>
-      </div>
+      </div>-->
     </div>
 
     <div class="table-container">
-      <table class="table table-striped fixed-table" style="border: 1px solid rgba(0, 0, 0, 0.150); border-collapse: collapse;" #plotsTable>
+      <table class="table table-striped fixed-table" style="border: 1px solid rgba(0, 0, 0, 0.150); border-collapse: collapse;" #table>
         <thead>
         <tr>
-          <th scope="col">N.º de Manzana</th>
-          <th scope="col">N.º de Lote</th>
-          <th scope="col">Area Total</th>
-          <th scope="col">Area Construida</th>
-          <th scope="col">Tipo de Lote</th>
-          <th scope="col">Estado del Lote</th>
-          @if (retrievePlotsByActive === undefined) {
-            <th scope="col">Estado</th>
-          }
-          <th scope="col">Acciones</th>
+          <th scope="col">Visitante</th>
+          <th scope="col">DNI</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Accion</th>
+          <th scope="col">Hora</th>
+          <th scope="col">Vehículo</th>
+          <th scope="col">Comentario</th>
+          <th scope="col">Autorizador</th>
         </tr>
         </thead>
         <tbody>
-          @for (plot of (filteredPlotsList.length ? filteredPlotsList : plotsList); track plot) {
+          @for (item of (filteredList.length ? filteredList : list); track item) {
 
             <tr>
               <td>
-                {{ plot.blockNumber }}
+                <!--TODO icono-->
+                {{ item.first_name + ' ' + item.last_name }}
               </td>
               <td>
-                {{ plot.plotNumber }}
+                {{ item.doc_type + ' ' + item.doc_number }}
               </td>
               <td>
-                {{ plot.totalArea }} m²
+                {{ translateTable(item.visitor_type, typeDictionary) }}
               </td>
               <td>
-                {{ plot.builtArea }} m²
+                {{ translateTable(item.action, actionDictionary) }}
               </td>
               <td>
-                {{ translateTable(plot.plotType, plotTypeDictionary) }}
+                {{ transformDate(item.action_date) }}
               </td>
               <td>
-                {{ translateTable(plot.plotStatus, plotStatusDictionary) }}
+                {{ item.vehicle_reg }}
               </td>
-              @if (retrievePlotsByActive === undefined) {
-                <td>
-                  @if (plot.isActive) {
-                    <p class="mb-0">
-                      <i class="bi bi-check2-circle text-success" style="font-size: 1.5rem;"></i>
-                    </p>
-                  } @else {
-                    <p class="mb-0">
-                      <i class="bi bi-x-circle text-danger" style="font-size: 1.5rem;"></i>
-                    </p>
-                  }
-                </td>
-              }
               <td>
-                <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </button>
-                  <ul class="dropdown-menu">
-                    @if (plot.isActive == false) {
-                      <li><a class="dropdown-item btn btn-danger" (click)="reactivatePlot(plot.id)">Reactivar</a></li>
-                    } @else {
-                      <li><a class="dropdown-item btn btn-primary" (click)="plotOwners(plot.id)">Detalle Dueños</a></li>
-                      <li><a class="dropdown-item btn btn-info" (click)="updatePlot(plot.id)" >Editar</a></li>
-                      <li><a class="dropdown-item btn btn-danger" (click)="assignPlotToDelete(plot)" data-bs-target="#exampleModal" data-bs-toggle="modal">Eliminar</a></li>
-                    }
-                    <li><a class="dropdown-item btn btn-primary" (click)="plotDetail(plot.id)">Detalle</a></li>
-                  </ul>
-                </div>
+                {{ item.comments }}
+              </td>
+              <td>
+                <!--TODO icono-->
+                {{ item.authorizer.name + ' ' + item.authorizer.last_name }}
               </td>
             </tr>
 

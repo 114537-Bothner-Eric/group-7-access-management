@@ -11,27 +11,13 @@ import {AccessFormComponent} from "./components/accesses/access-form/access-form
 import {AuthFormComponent} from "./components/authorizations/auth-form/auth-form.component";
 import {AuthListComponent} from "./components/authorizations/auth-list/auth-list.component";
 import {AccessListComponent} from "./components/accesses/access-list/access-list.component";
+import {EntityFormComponent} from "./components/entity/entity-form/entity-form.component";
+import {EntityListComponent} from "./components/entity/entity-list/entity-list.component";
 
 export const routes: Routes = [
   {
-    path: 'visitor/list',
-    component: VisitorListComponent,
-  },
-  {
-    path: 'visitor/form',
-    component: VisitorFormComponent,
-  },
-  {
-    path: 'visitor/edit/:id',
-    component: VisitorFormComponent,
-  },
-  {
     path: 'qr',
     component: QrComponent,
-  },
-  {
-    path: 'register-range',
-    component: AuthorizedRangeFormComponent,
   },
   {
     path: 'access/form',
@@ -48,6 +34,14 @@ export const routes: Routes = [
   {
     path: 'auth/list',
     component: AuthListComponent,
+  },
+  {
+    path: 'entity/form',
+    component: EntityFormComponent,
+  },
+  {
+    path: 'entity/list',
+    component: EntityListComponent,
   },
   { path: 'home', component: HomeComponent, /* canActivate: [authGuard] */ },
   { path: '', redirectTo: '/home', pathMatch: 'full' },

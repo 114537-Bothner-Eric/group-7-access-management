@@ -24,7 +24,7 @@ export class AccessFormComponent {
       first_name: ['', Validators.required],
       last_name: ['', Validators.required],
       doc_number: [null, Validators.required],
-      action: ['ENTRY', Validators.required], // Nueva acción (ENTRY/SALIDA)
+      action: ['', Validators.required], // Nueva acción (ENTRY/SALIDA)
       vehicle_type: ['', Validators.required], // Tipo de vehículo (CAR/MOTORBIKE/etc.)
       vehicle_reg: ['', Validators.required], // Matrícula del vehículo
       vehicle_description: ['', Validators.required], // Descripción detallada del vehículo

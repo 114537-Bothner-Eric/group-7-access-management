@@ -9,14 +9,18 @@ import {ExcelService} from "../../../services/excel.service";
 import {AccessModel} from "../../../models/access.model";
 import {AccessService} from "../../../services/access.service";
 import {AuthorizerCompleterService} from "../../../services/authorizer-completer.service";
+import {
+  CadastrePlotFilterButtonsComponent
+} from "../cadastre-plot-filter-buttons/cadastre-plot-filter-buttons.component";
 
 @Component({
   selector: 'app-access-list',
   standalone: true,
-    imports: [
-        NgIf,
-        ReactiveFormsModule
-    ],
+  imports: [
+    NgIf,
+    ReactiveFormsModule,
+    CadastrePlotFilterButtonsComponent
+  ],
   templateUrl: './access-list.component.html',
   styleUrl: './access-list.component.css'
 })

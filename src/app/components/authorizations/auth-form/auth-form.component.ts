@@ -6,6 +6,7 @@ import {AuthService} from "../../../services/auth.service";
 import {LoginService} from "../../../services/login.service";
 import Swal from 'sweetalert2';
 import {NgIf} from "@angular/common";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-auth-form',
@@ -20,7 +21,7 @@ import {NgIf} from "@angular/common";
 export class AuthFormComponent implements OnInit {
   authForm: FormGroup = {} as FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router : Router) {
   }
 
   ngOnInit(): void {
@@ -86,7 +87,7 @@ export class AuthFormComponent implements OnInit {
   }
 
   onCancel() {
-    // Lógica para cancelar el formulario
+    this.router.navigate(['/auth/list']);
   }
 
 

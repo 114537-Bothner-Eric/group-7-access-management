@@ -1,4 +1,4 @@
-<app-main-container title="Lista de Accesos">
+<app-main-container title="Lista de Entidades">
   <div class="card-body">
     <!-- ESTE COMPONENTE LO VAN A TENER QUE MODIFICAR ES EL DEL BUSCAR, EXPORTAR, ETC -->
     <!-- @param itemList => Mandan la lista con la cual hacen la tabla
@@ -12,7 +12,7 @@
       #filterComponent
       [itemsList]="list"
       [tableName]="tableName.nativeElement"
-      formPath="/access/form"
+      formPath="/entity/form"
       [dictionaries]="dictionaries"
       objectName="ACCESOS"></app-cadastre-plot-filter-buttons>
 
@@ -29,7 +29,6 @@
             </button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.VISITOR_TYPE)">Tipo de visitante</a></li>
-              <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.ACTION)">Acción</a></li>
             </ul>
           </div>
 
@@ -76,13 +75,9 @@
       <table class="table table-striped fixed-table" style="border: 1px solid rgba(0, 0, 0, 0.150); border-collapse: collapse;" #table>
         <thead>
         <tr>
-          <th scope="col">Visitante</th>
-          <th scope="col">DNI</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Documento</th>
           <th scope="col">Tipo</th>
-          <th scope="col">Accion</th>
-          <th scope="col">Vehículo</th>
-          <th scope="col">Comentario</th>
-          <th scope="col">Autorizador</th>
         </tr>
         </thead>
         <tbody>
@@ -98,19 +93,6 @@
               </td>
               <td>
                 {{ translateTable(item.visitor_type, typeDictionary) }}
-              </td>
-              <td>
-                {{ translateTable(item.action, actionDictionary) }}
-              </td>
-              <td>
-                {{ item.vehicle_reg }}
-              </td>
-              <td>
-                {{ item.comments }}
-              </td>
-              <td>
-                <!--TODO icono-->
-                {{ item.auth_first_name + ' ' + item.auth_last_name }}
               </td>
             </tr>
 

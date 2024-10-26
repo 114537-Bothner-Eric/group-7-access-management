@@ -4,6 +4,7 @@ import {AccessService} from "../../../services/access.service";
 import {AuthService} from "../../../services/auth.service";
 import Swal from "sweetalert2";
 import {LoginService} from "../../../services/login.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-access-form',
@@ -14,18 +15,18 @@ import {LoginService} from "../../../services/login.service";
   templateUrl: './access-form.component.html',
   styleUrl: './access-form.component.css'
 })
-export class AccessFormComponent {
+export class AccessFormComponent implements OnInit{
   accessForm: FormGroup = {} as FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private  loginService : LoginService) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private  loginService : LoginService, private router : Router) {}
 
   ngOnInit(): void {
     this.accessForm = this.fb.group({
       first_name: ['', Validators.required],
       last_name: ['', Validators.required],
       doc_number: [null, Validators.required],
-      action: ['', Validators.required], // Nueva acción (ENTRY/SALIDA)
-      vehicle_type: ['', Validators.required], // Tipo de vehículo (CAR/MOTORBIKE/etc.)
+      action: ['ENTRY', Validators.required], // Nueva acción (ENTRY/SALIDA)
+      vehicle_type: ['CAR', Validators.required], // Tipo de vehículo (CAR/MOTORBIKE/etc.)
       vehicle_reg: ['', Validators.required], // Matrícula del vehículo
       vehicle_description: ['', Validators.required], // Descripción detallada del vehículo
       comments: [''] // Comentarios adicionales
@@ -43,6 +44,6 @@ export class AccessFormComponent {
   }
 
   onCancel() {
-    // Lógica para cancelar el formulario
+    this.router.navigate(['/access/list']);
   }
 }

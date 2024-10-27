@@ -13,6 +13,7 @@ import {NgbModal, NgbPagination} from "@ng-bootstrap/ng-bootstrap";
 import {AccessActionDictionary, AccessModel} from "../../../models/access.model";
 import {AccessService} from "../../../services/access.service";
 import {TransformResponseService} from "../../../services/transform-response.service";
+import { CadastreExcelService } from '../../../services/cadastre-excel.service';
 
 @Component({
   selector: 'app-auth-list',
@@ -28,6 +29,7 @@ import {TransformResponseService} from "../../../services/transform-response.ser
   styleUrl: './auth-list.component.css'
 })
 export class AuthListComponent  implements OnInit, AfterViewInit {
+
   @ViewChild('filterComponent') filterComponent!: CadastrePlotFilterButtonsComponent<AccessModel>;
   @ViewChild('table', {static: true}) tableName!: ElementRef<HTMLTableElement>;
 
@@ -72,6 +74,7 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
   //#region NgOnInit | BUSCAR
   ngOnInit() {
     this.confirmFilter();
+    this.getAll();
   }
 
   ngAfterViewInit(): void {
@@ -95,6 +98,7 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
         this.filteredList = [...this.list]
         this.lastPage = response.last
         this.totalItems = response.totalElements;
+        console.log(this.list);
       },
       error => {
         console.error('Error getting:', error);

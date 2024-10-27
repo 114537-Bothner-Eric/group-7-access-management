@@ -1,15 +1,34 @@
-.text-color {
-    color: #d98b16;
+app-notifications {
+  color: white !important;
 }
 
-.bg-orange {
-    background-color: #d98b16;
+/* Estilo para el botón de logout */
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
 }
 
-.border-og {
-    border-color: #d98b16;
+.btn-danger:hover {
+  background-color: #bb2d3b;
+  border-color: #b02a37;
 }
 
-.navbar {
-    z-index: 1050;
+/* Asegurar que los íconos están alineados verticalmente */
+.d-flex.align-items-center i {
+  font-size: 1.1rem;
+}
+
+
+.navbar-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  margin-left: 1rem;
+  /* Si necesitas ajustar el margen */
+}
+
+.navbar-brand {
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
 }

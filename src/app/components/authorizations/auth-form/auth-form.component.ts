@@ -20,12 +20,15 @@ import {Router} from "@angular/router";
 })
 export class AuthFormComponent implements OnInit {
   authForm: FormGroup = {} as FormGroup;
+  plots: any[] = []
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router : Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router: Router) {
   }
 
   ngOnInit(): void {
     this.authForm = this.createForm();
+    this.authForm.get('visitor_type')?.disable()
+    this.initPlots()
   }
 
   get authRangeRequests(): FormArray {
@@ -90,6 +93,20 @@ export class AuthFormComponent implements OnInit {
     this.router.navigate(['/auth/list']);
   }
 
+  initPlots() {
+    this.plots = [
+      { id: 1, desc: "Andrés Torres" },
+      { id: 2, desc: "Ana María" },
+      { id: 3, desc: "Carlos Pérez" },
+      { id: 4, desc: "Luisa Fernández" },
+      { id: 5, desc: "Miguel Ángel" },
+      { id: 6, desc: "Sofía Martínez" },
+      { id: 7, desc: "David Gómez" },
+      { id: 8, desc: "Isabel García" },
+      { id: 9, desc: "Fernando López" },
+      { id: 10, desc: "María José" }
+    ]
+  }
 
 }
 

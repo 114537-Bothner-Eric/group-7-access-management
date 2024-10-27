@@ -11,6 +11,8 @@ import {AccessService} from "../../../services/access.service";
 import {TransformResponseService} from "../../../services/transform-response.service";
 import {AuthorizerCompleterService} from "../../../services/authorizer-completer.service";
 import {VisitorTypeAccessDictionary} from "../../../models/authorize.model";
+import {Visitor} from "../../../models/visitor.model";
+import {VisitorService} from "../../../services/visitor.service";
 
 @Component({
   selector: 'app-entity-list',
@@ -26,12 +28,12 @@ import {VisitorTypeAccessDictionary} from "../../../models/authorize.model";
   styleUrl: './entity-list.component.css'
 })
 export class EntityListComponent  implements OnInit, AfterViewInit {
-  @ViewChild('filterComponent') filterComponent!: CadastrePlotFilterButtonsComponent<AccessModel>;
+  @ViewChild('filterComponent') filterComponent!: CadastrePlotFilterButtonsComponent<Visitor>;
   @ViewChild('table', {static: true}) tableName!: ElementRef<HTMLTableElement>;
 
   //#region SERVICIOS
   private router = inject(Router)
-  private accessService = inject(AccessService)
+  private visitorService = inject(VisitorService)
   private transformResponseService = inject(TransformResponseService)
   private authorizerCompleterService = inject(AuthorizerCompleterService)
   private toastService = inject(ToastService)
@@ -42,8 +44,8 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
   currentPage: number = 0
   pageSize: number = 10
   sizeOptions: number[] = [10, 25, 50]
-  list: AccessModel[] = [];
-  filteredList: AccessModel[] = [];
+  list: Visitor[] = [];
+  filteredList: Visitor[] = [];
   lastPage: boolean | undefined
   totalItems: number = 0;
   //#endregion
@@ -73,7 +75,7 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.filterComponent.filter$.subscribe((filteredList: AccessModel[]) => {
+    this.filterComponent.filter$.subscribe((filteredList: Visitor[]) => {
       this.filteredList = filteredList;
       this.currentPage = 0;
     });
@@ -83,7 +85,7 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
 
   //#region GET_ALL
   getAll() {
-    this.accessService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
+    this.visitorService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
         let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
         response.content.forEach(data => {
           data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
@@ -104,7 +106,7 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
 
   //#region FILTROS
   filterByVisitorType(type: string) {
-    this.accessService.getByType(this.currentPage, this.pageSize, type, this.retrieveByActive).subscribe(data => {
+   /* this.visitorService.getByType(this.currentPage, this.pageSize, type, this.retrieveByActive).subscribe(data => {
         let response = this.transformResponseService.transformType(data,this.currentPage, this.pageSize, type, this.retrieveByActive)
         response.content.forEach(data => {
           data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
@@ -118,11 +120,11 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
       error => {
         console.error('Error getting:', error);
       }
-    );
+    );*/
   }
 
   filterByAction(action: string) {
-    this.accessService.getByAction(this.currentPage, this.pageSize, action, this.retrieveByActive).subscribe(data => {
+    /*this.visitorService.getByAction(this.currentPage, this.pageSize, action, this.retrieveByActive).subscribe(data => {
         let response = this.transformResponseService.transformAction(data,this.currentPage, this.pageSize, action, this.retrieveByActive)
         response.content.forEach(data => {
           data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
@@ -136,7 +138,7 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
       error => {
         console.error('Error getting:', error);
       }
-    );
+    );*/
   }
 
   //#endregion
@@ -294,4 +296,11 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
 
   //#endregion
 
+
+  editVisitor(id:number){
+
+  }
+  deleteVisitor(id:number){
+
+  }
 }

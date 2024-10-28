@@ -144,7 +144,7 @@ let plate = this.accessForm.get('vehicle_reg')?.value
         }
       }).then((result) => {
         if (result.isDismissed) {
-          this.router.navigate(['/auth/form']);
+          this.router.navigate(['/auth/form'], { queryParams: { doc_number: document } });
         }
       });
       return

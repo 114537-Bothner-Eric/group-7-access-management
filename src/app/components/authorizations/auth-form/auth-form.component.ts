@@ -1,4 +1,4 @@
-import {Component, OnInit,} from '@angular/core';
+import {Component, inject, OnInit,} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule, FormArray} from '@angular/forms';
 import {CommonModule, NgClass} from '@angular/common';
 import {DaysOfWeek} from '../../../models/authorizeRequest.model'
@@ -6,7 +6,7 @@ import {AuthService} from "../../../services/auth.service";
 import {LoginService} from "../../../services/login.service";
 import Swal from 'sweetalert2';
 import {NgIf} from "@angular/common";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-auth-form',
@@ -22,6 +22,7 @@ import {Router} from "@angular/router";
 export class AuthFormComponent implements OnInit {
   authForm: FormGroup = {} as FormGroup;
   plots: any[] = []
+ paramRoutes = inject(ActivatedRoute);
 
   constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router: Router) {
   }
@@ -30,6 +31,12 @@ export class AuthFormComponent implements OnInit {
     this.authForm = this.createForm();
     this.authForm.get('visitor_type')?.disable()
     this.initPlots()
+
+    const documentParam = this.paramRoutes.snapshot.queryParamMap.get('doc_number');
+    debugger
+    if (documentParam) {
+      this.authForm.get('visitor_request.doc_number')?.patchValue(documentParam);
+    }
   }
 
   get authRangeRequests(): FormArray {

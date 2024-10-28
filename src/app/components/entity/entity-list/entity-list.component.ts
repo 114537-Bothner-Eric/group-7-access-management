@@ -75,9 +75,8 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.filterComponent.filter$.subscribe((filteredList: Visitor[]) => {
-      this.filteredList = filteredList;
-      this.currentPage = 0;
+   this.filterComponent.filter$.subscribe((filter: string) => {
+     this.getAllFiltered(filter)
     });
   }
 
@@ -102,12 +101,10 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
     );
   }
 
-  //#endregion
-
-  //#region FILTROS
-  filterByVisitorType(type: string) {
-   /* this.visitorService.getByType(this.currentPage, this.pageSize, type, this.retrieveByActive).subscribe(data => {
-        let response = this.transformResponseService.transformType(data,this.currentPage, this.pageSize, type, this.retrieveByActive)
+  getAllFiltered(filter:string) {
+    this.visitorService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
+        data = data.filter(x => (x.name.toLowerCase().includes(filter) || x.last_name.toLowerCase().includes(filter) || x.doc_number.toString().includes(filter)))
+        let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
         response.content.forEach(data => {
           data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
         })
@@ -120,7 +117,29 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
       error => {
         console.error('Error getting:', error);
       }
-    );*/
+    );
+  }
+
+  //#endregion
+
+  //#region FILTROS
+  filterByVisitorType(type: string) {
+   this.visitorService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
+       data = data.filter(x => (x.visitor_types.includes(type)))
+        let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
+        response.content.forEach(data => {
+          data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
+        })
+
+        this.list = response.content;
+        this.filteredList = [...this.list]
+        this.lastPage = response.last
+        this.totalItems = response.totalElements;
+      },
+      error => {
+        console.error('Error getting:', error);
+      }
+    );
   }
 
   filterByAction(action: string) {
@@ -156,6 +175,7 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
         this.actualFilter = AccessFilters.NOTHING
         this.applyFilterWithNumber = false;
         this.applyFilterWithCombo = false;
+        this.filterComponent.clearFilter();
         this.confirmFilter();
         break;
 
@@ -278,12 +298,11 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
 
   //#region FUNCIONES PARA PAGINADO
   onItemsPerPageChange() {
-    --this.currentPage
     this.confirmFilter();
   }
 
   onPageChange(page: number) {
-    this.currentPage = --page;
+    this.currentPage = page;
     this.confirmFilter();
   }
 

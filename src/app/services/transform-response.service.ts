@@ -15,6 +15,7 @@ export class TransformResponseService {
   }
 
   transformResponse(model: any[], page: number, size: number, isActive?: boolean) : PaginatedResponse<any> {
+    --page
     let totalElements = model.length
 
     let modelFiltered = model.slice(page*size,page*size+size)

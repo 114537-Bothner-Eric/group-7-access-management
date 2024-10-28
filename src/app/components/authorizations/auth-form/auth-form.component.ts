@@ -1,6 +1,6 @@
 import {Component, OnInit,} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule, FormArray} from '@angular/forms';
-import {CommonModule} from '@angular/common';
+import {CommonModule, NgClass} from '@angular/common';
 import {DaysOfWeek} from '../../../models/authorizeRequest.model'
 import {AuthService} from "../../../services/auth.service";
 import {LoginService} from "../../../services/login.service";
@@ -13,7 +13,8 @@ import {Router} from "@angular/router";
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NgIf
+    NgIf,
+    NgClass
   ],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.css'
@@ -72,22 +73,69 @@ export class AuthFormComponent implements OnInit {
   onSubmit() {
     if (this.authForm.valid) {
       const formData = this.authForm.value;
+      formData.visitor_type = 'VISITOR';
+      formData.visitor_request.birth_date = formatFormDate(formData.visitor_request.birth_date);
 
-      formData.visitor_request.birth_date = formatDate(formData.visitor_request.birth_date);
+      const now = new Date();
 
-      formData.auth_range_request.forEach((range: any) => {
-        range.date_from = formatDate(range.date_from);
-        range.date_to = formatDate(range.date_to);
-        range.hour_from += ':00';
-        range.hour_to += ':00';
-      });
+      const formatDate = (date: Date) => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+      };
 
+      const formatTime = (date: Date) => {
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = '00';
+        return `${hours}:${minutes}:${seconds}`;
+      };
+
+      const dateFrom = formatDate(now);
+      const dateTo = new Date(now.getTime() + 15 * 60000);
+      const isNewDay = dateTo.getDate() !== now.getDate();
+      const finalDateFrom = isNewDay ? formatDate(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0)) : dateFrom;
+
+      const authRange = {
+        date_from: finalDateFrom,
+        date_to: formatDate(dateTo),
+        hour_from: isNewDay ? "00:00:00" : formatTime(now),
+        hour_to: formatTime(dateTo),
+        days_of_week: [this.getDayOfWeek(now)],
+        comment: "Access for John Doe"
+      };
+
+      formData.auth_range_request = [authRange];
 
       this.authService.createAuth(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
-        Swal.fire('Registro exitoso...', "this.titularAlerta", 'success');
+        Swal.fire({
+          title: 'Registro exitoso!',
+          text: 'Proceda a registrar el acceso',
+          icon: 'success',
+          showCancelButton: true,
+          confirmButtonText: 'Cerrar',
+          cancelButtonText: 'Ir a nuevo acceso',
+          customClass: {
+            confirmButton: 'btn btn-danger',
+            cancelButton: 'btn btn-primary'
+          }
+        }).then((result) => {
+          if (result.isDismissed) {
+            this.router.navigate(['/access/form']);
+          }
+        });
       });
+    } else {
+      this.markAllAsTouched();
     }
   }
+
+  getDayOfWeek(date: Date): string {
+    const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+    return days[date.getDay()];
+  }
+
 
   onCancel() {
     this.router.navigate(['/auth/list']);
@@ -108,9 +156,42 @@ export class AuthFormComponent implements OnInit {
     ]
   }
 
+  private markAllAsTouched(): void {
+    // Marca todos los controles en el formulario principal
+    Object.values(this.authForm.controls).forEach(control => {
+      control.markAsTouched();
+      // Si es un FormGroup, recorre sus controles
+      if (control instanceof FormGroup) {
+        this.markAllAsTouchedRecursive(control);
+      }
+      // Si es un FormArray, recorre sus controles
+      if (control instanceof FormArray) {
+        control.controls.forEach(innerControl => {
+          innerControl.markAsTouched();
+        });
+      }
+    });
+  }
+
+// Función recursiva para marcar todos los controles como tocados
+  private markAllAsTouchedRecursive(formGroup: FormGroup): void {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markAllAsTouchedRecursive(control); // Llamada recursiva
+      }
+      if (control instanceof FormArray) {
+        control.controls.forEach(innerControl => {
+          innerControl.markAsTouched();
+        });
+      }
+    });
+  }
+
+
 }
 
-function formatDate(inputDate: string): string {
+function formatFormDate(inputDate: string): string {
   // Verificar que la entrada sea una fecha válida en el formato yyyy-MM-dd
   const dateParts = inputDate.split('-');
   if (dateParts.length !== 3) {

@@ -1,6 +1,8 @@
 export interface Visitor {
   visitor_id: number;
   owner_id: number;
+  loader_id: string;
+  loader_name: string;
   name: string;
   last_name: string;
   visitor_types:string[];

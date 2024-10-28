@@ -78,9 +78,8 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.filterComponent.filter$.subscribe((filteredList: any[]) => {
-      this.filteredList = filteredList;
-      this.currentPage = 0;
+   this.filterComponent.filter$.subscribe((filter: string) => {
+     this.getAllFiltered(filter)
     });
   }
 
@@ -89,6 +88,26 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
   //#region GET_ALL
   getAll() {
     this.authService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
+        let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
+        response.content.forEach(data => {
+          data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
+        })
+
+        this.list = response.content;
+        this.filteredList = [...this.list]
+        this.lastPage = response.last
+        this.totalItems = response.totalElements;
+        console.log(this.list);
+      },
+      error => {
+        console.error('Error getting:', error);
+      }
+    );
+  }
+
+  getAllFiltered(filter: string) {
+    this.authService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
+        data = data.filter(x => (x.visitor.name.toLowerCase().includes(filter) || x.visitor.last_name?.toLowerCase().includes(filter) || x.visitor.doc_number.toString().includes(filter)))
         let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
         response.content.forEach(data => {
           data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
@@ -162,6 +181,7 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
         this.actualFilter = AuthFilters.NOTHING
         this.applyFilterWithNumber = false;
         this.applyFilterWithCombo = false;
+        this.filterComponent.clearFilter();
         this.confirmFilter();
         break;
 
@@ -271,6 +291,7 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
     let res = ""
     for (let authRange of ranges) {
       let temp = ""
+      temp += authRange.date_from.replaceAll('-','/') + ' - ' + authRange.date_to.replaceAll('-','/') + ' | '
       for (let day of authRange.days_of_week) {
         switch (day) {
           case "MONDAY":
@@ -301,7 +322,7 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
       }
       temp = temp.slice(0,temp.length-1)
 
-      temp+= ' ' + authRange.hour_from.slice(0,5) + ' a ' + authRange.hour_to.slice(0,5)
+      temp+= ' | ' + authRange.hour_from.slice(0,5) + ' a ' + authRange.hour_to.slice(0,5)
 
       res += temp + ' y '
     }
@@ -324,12 +345,11 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
 
   //#region FUNCIONES PARA PAGINADO
   onItemsPerPageChange() {
-    --this.currentPage
     this.confirmFilter();
   }
 
   onPageChange(page: number) {
-    this.currentPage = --page;
+    this.currentPage = page;
     this.confirmFilter();
   }
 

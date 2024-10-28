@@ -2,10 +2,8 @@ import {AfterViewInit, Component, ElementRef, inject, OnInit, ViewChild} from '@
 import {NgIf} from "@angular/common";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Auth, VisitorTypeAccessDictionary} from "../../../models/authorize.model";
-import {AuthService} from "../../../services/auth.service";
-import {LoginService} from "../../../services/login.service";
+import { CommonModule } from '@angular/common';
 import {ActivatedRoute, Router} from "@angular/router";
-import {ExcelService} from "../../../services/excel.service";
 import {AccessActionDictionary, AccessFilters, AccessModel} from "../../../models/access.model";
 import {AccessService} from "../../../services/access.service";
 import {AuthorizerCompleterService} from "../../../services/authorizer-completer.service";
@@ -13,7 +11,7 @@ import {
   CadastrePlotFilterButtonsComponent
 } from "../cadastre-access-filter-buttons/cadastre-plot-filter-buttons.component";
 import {NgbModal, NgbPagination} from "@ng-bootstrap/ng-bootstrap";
-import {MainContainerComponent, ToastService} from "ngx-dabd-grupo01";
+import {MainContainerComponent, TableComponent, ToastService} from "ngx-dabd-grupo01";
 import {PaginatedResponse} from "../../../models/api-response";
 import {TransformResponseService} from "../../../services/transform-response.service";
 
@@ -22,11 +20,13 @@ import {TransformResponseService} from "../../../services/transform-response.ser
   standalone: true,
   imports: [
     NgIf,
+    CommonModule,
     ReactiveFormsModule,
     CadastrePlotFilterButtonsComponent,
     NgbPagination,
     MainContainerComponent,
-    FormsModule
+    FormsModule,
+    TableComponent
   ],
   templateUrl: './access-list.component.html',
   styleUrl: './access-list.component.css'
@@ -49,6 +49,7 @@ export class AccessListComponent implements OnInit, AfterViewInit {
   pageSize: number = 10
   sizeOptions: number[] = [10, 25, 50]
   list: AccessModel[] = [];
+  completeList: AccessModel[] = [];
   filteredList: AccessModel[] = [];
   lastPage: boolean | undefined
   totalItems: number = 0;
@@ -79,9 +80,8 @@ export class AccessListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.filterComponent.filter$.subscribe((filteredList: AccessModel[]) => {
-      this.filteredList = filteredList;
-      this.currentPage = 0;
+    this.filterComponent.filter$.subscribe((filter: string) => {
+      this.getAllFiltered(filter)
     });
   }
 
@@ -90,6 +90,25 @@ export class AccessListComponent implements OnInit, AfterViewInit {
   //#region GET_ALL
   getAll() {
     this.accessService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
+        let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
+        response.content.forEach(data => {
+          data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
+        })
+
+        this.list = response.content;
+        this.filteredList = [...this.list]
+        this.lastPage = response.last
+        this.totalItems = response.totalElements;
+      },
+      error => {
+        console.error('Error getting:', error);
+      }
+    );
+  }
+  //#region GET_ALL
+  getAllFiltered(filter: string) {
+    this.accessService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
+      data = data.filter(x => (x.first_name.toLowerCase().includes(filter) || x.last_name.toLowerCase().includes(filter) || x.doc_number.toString().includes(filter) || x.vehicle_reg.toLowerCase().includes(filter)))
         let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
         response.content.forEach(data => {
           data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
@@ -160,6 +179,7 @@ export class AccessListComponent implements OnInit, AfterViewInit {
         this.actualFilter = AccessFilters.NOTHING
         this.applyFilterWithNumber = false;
         this.applyFilterWithCombo = false;
+        this.filterComponent.clearFilter();
         this.confirmFilter();
         break;
 
@@ -294,12 +314,15 @@ export class AccessListComponent implements OnInit, AfterViewInit {
 
   //#region FUNCIONES PARA PAGINADO
   onItemsPerPageChange() {
-    --this.currentPage
     this.confirmFilter();
   }
 
+  filterChange(data: any){
+    console.log(data)
+  }
+
   onPageChange(page: number) {
-    this.currentPage = --page;
+    this.currentPage = page;
     this.confirmFilter();
   }
 
@@ -312,4 +335,5 @@ export class AccessListComponent implements OnInit, AfterViewInit {
 
   //#endregion
 
+  protected readonly oninput = oninput;
 }

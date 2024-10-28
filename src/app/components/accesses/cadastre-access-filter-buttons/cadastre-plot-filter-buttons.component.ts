@@ -4,23 +4,25 @@ import { CadastreExcelService } from '../../../services/cadastre-excel.service';
 import { Router } from '@angular/router';
 import {AccessService} from "../../../services/access.service";
 import {TransformResponseService} from "../../../services/transform-response.service";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-cadastre-plot-filter-buttons',
   standalone: true,
-  imports: [],
+  imports: [
+    FormsModule
+  ],
   templateUrl: './cadastre-plot-filter-buttons.component.html',
   styleUrl: './cadastre-plot-filter-buttons.component.css'
 })
 export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
   private router = inject(Router);
-
+  filterText: string = ""
   private transformResponseService = inject(TransformResponseService)
   // Reemplazen con su servicio para el getAll.
   private service = inject(AccessService)
   // Inject the Excel service for export functionality
   private excelService = inject(CadastreExcelService);
-  private exports = inject(CadastreExcelService);
 
   LIMIT_32BITS_MAX = 2147483647
 
@@ -38,7 +40,7 @@ export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
   @Input() dictionaries: Array<{ [key: string]: any }> = [];
 
   // Subject to emit filtered results
-  private filterSubject = new Subject<T[]>();
+  private filterSubject = new Subject<string>();
   // Observable that emits filtered owner list
   filter$ = this.filterSubject.asObservable();
 
@@ -61,7 +63,7 @@ export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
     this.service.getAll(0, this.LIMIT_32BITS_MAX, true).subscribe(
       data => {
         let response = this.transformResponseService.transformResponse(data, 0, this.LIMIT_32BITS_MAX, true)
-        this.exports.exportTableToPdf(this.tableName, `${this.getActualDayFormat()}_${this.objectName}`);
+        this.excelService.exportTableToPdf(this.tableName, `${this.getActualDayFormat()}_${this.objectName}`);
       },
       error => {
         console.log("Error retrieved all, on export component.")
@@ -98,27 +100,8 @@ export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
   onFilterTextBoxChanged(event: Event) {
     const target = event.target as HTMLInputElement;
 
-    if (target.value?.length <= 2) {
-      this.filterSubject.next(this.itemsList);
-    } else {
-      let filterValue = target.value.toLowerCase();
+      this.filterSubject.next(target.value.toLowerCase());
 
-      const filteredList = this.itemsList.filter(item => {
-        return Object.values(item).some(prop => {
-          const propString = prop ? prop.toString().toLowerCase() : '';
-
-          // Validar que dictionaries esté definido y tenga elementos antes de mapear
-          const translations = this.dictionaries && this.dictionaries.length
-            ? this.dictionaries.map(dict => this.translateDictionary(propString, dict)).filter(Boolean)
-            : [];
-
-          // Se puede usar `includes` para verificar si hay coincidencias
-          return propString.includes(filterValue) || translations.some(trans => trans?.toLowerCase().includes(filterValue));
-        });
-      });
-
-      this.filterSubject.next(filteredList);
-    }
   }
 
   /**
@@ -145,5 +128,9 @@ export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
   redirectToForm() {
     console.log(this.formPath);
     this.router.navigate([this.formPath]);
+  }
+
+  clearFilter(){
+this.filterText = ""
   }
 }

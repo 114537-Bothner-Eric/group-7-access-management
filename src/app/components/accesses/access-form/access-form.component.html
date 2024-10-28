@@ -8,22 +8,38 @@
         Número de Documento<label class="text-danger">*</label>
       </label>
       <input type="number" id="doc_number" class="form-control" formControlName="doc_number"
+             [ngClass]="{
+        'is-invalid': (accessForm.get('doc_number')?.invalid && accessForm.get('doc_number')?.touched) ||  accessForm.get('doc_number')?.hasError('unauthorized')
+      }"
              (input)="onDocNumberChange($event)" />
     </div>
     <div>
-      <small class="text-danger ms-2" *ngIf="accessForm.get('doc_number')?.invalid && accessForm.get('doc_number')?.touched">
-        requerido
+      <small class="text-danger ms-2" *ngIf="accessForm.get('doc_number')?.invalid && accessForm.get('doc_number')?.touched && !accessForm.get('doc_number')?.hasError('unauthorized')">
+        Requerido
+      </small>
+      <small class="text-danger ms-2" *ngIf="accessForm.get('doc_number')?.hasError('unauthorized')">
+        Ingrese un documento registrado
       </small>
     </div>
   </div>
 
-  <div class="col-md-6 mt-3"></div>
+  <div class="col-md-6 mt-3">
+    <div class="d-flex align-items-center flex-row">
+      <button type="button" class="btn btn-info" (click)="isAuthorized()"
+              [disabled]="checkButtonDisabled">Consultar</button>
+    </div>
+  </div>
 
   <!-- Nombre -->
   <div class="col-md-6 mt-3">
     <div class="d-flex align-items-center flex-row">
       <label for="first_name" class="form-label m-0">Nombre</label>
-      <input type="text" id="first_name" class="form-control ms-3" formControlName="first_name" />
+      <input
+        type="text"
+        id="first_name"
+        class="form-control ms-3"
+        formControlName="first_name"
+      />
     </div>
     <div>
       <small class="text-danger ms-2" *ngIf="accessForm.get('first_name')?.invalid && accessForm.get('first_name')?.touched">
@@ -47,6 +63,20 @@
 
 <hr>
   <h6>Detalles</h6>
+
+  <!-- Destino -->
+  <div class="col-md-6 mt-3">
+    <div class="d-flex align-items-center flex-row">
+      <label for="first_name" class="form-label m-0">Nro de Lote de Destino</label>
+      <input
+        type="text"
+        id="plot_id"
+        class="form-control ms-3"
+        formControlName="plot_id"
+      />
+    </div>
+  </div>
+
   <!-- Acción (Entrada/Salida) -->
   <div class="col-md-6 mt-3">
     <div class="d-flex align-items-center flex-row">
@@ -67,6 +97,7 @@
       <option value="PICKUP">Camioneta</option>
       <option value="MOTORBIKE">Motocicleta</option>
       <option value="TRUCK">Camión</option>
+   <!--   <option value="FOOT">A pie / Bicicleta</option>-->
     </select>
     </div>
   </div>
@@ -75,11 +106,14 @@
   <div class="col-md-6 mt-3">
     <div class="d-flex align-items-center flex-row">
       <label for="vehicle_reg" class="form-label m-0">Patente</label><label class="text-danger">*</label>
-      <input type="text" id="vehicle_reg" class="form-control ms-3" formControlName="vehicle_reg" />
+      <input type="text" id="vehicle_reg" class="form-control ms-3" formControlName="vehicle_reg"
+             [ngClass]="{
+        'is-invalid': accessForm.get('vehicle_reg')?.invalid && accessForm.get('vehicle_reg')?.touched
+      }"/>
     </div>
     <div>
       <small class="text-danger ms-2" *ngIf="accessForm.get('vehicle_reg')?.invalid && accessForm.get('vehicle_reg')?.touched">
-        requerido
+        Requerido
       </small>
     </div>
   </div>

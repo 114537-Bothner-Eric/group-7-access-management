@@ -163,7 +163,7 @@
         ></ngb-pagination>
 
         <div class="ms-2">
-          <button class="btn btn-outline-secondary disabled">
+          <button class="btn btn-secondary ms-3 mb-3" (click)="onInfoButtonClick()">
             <i class="bi bi-info-circle"></i>
           </button>
         </div>
@@ -171,3 +171,69 @@
 
     </div>
   </div>
+
+  <ng-template #infoModal let-modal>
+    <div class="modal-header fs-6 py-1">
+      <h4 class="modal-title">Información de la Lista de entidades</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body fs-6 py-2">
+      <div class="container-fluid">
+        <!-- Introducción -->
+        <div class="alert alert-info mb-2 py-2">
+          <h5 class="alert-heading">¿Qué es esta pantalla?</h5>
+          <p class="mb-0 small">Esta pantalla permite visualizar y gestionar los registros de visitantes. Puedes ver los detalles de cada visitante, aplicar filtros, y realizar acciones específicas sobre cada registro.</p>
+        </div>
+  
+        <!-- Campos Principales -->
+        <div class="card mb-2">
+          <div class="card-header py-1">
+            <h5 class="mb-0">Datos de Visitantes</h5>
+          </div>
+          <div class="card-body py-2">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item py-1">
+                <strong>Lista de Visitantes:</strong> Muestra los detalles de cada visitante, incluyendo nombre, apellido, tipo y número de documento.
+              </li>
+              <li class="list-group-item py-1">
+                <strong>Filtros:</strong> Permite aplicar filtros como el tipo de visitante para acceder de manera facil a los registros que coincidan con el tipo de visitante de manera rápida.
+              </li>
+              <li class="list-group-item py-1">
+                <strong>Paginación:</strong> Control para navegar entre múltiples páginas de registros de visitantes.
+              </li>
+              <li class="list-group-item py-1">
+                <strong>Exportar:</strong> Opción para exportar la lista de visitantes en formato PDF o Excel.
+              </li>
+            </ul>
+          </div>
+        </div>
+  
+        <!-- Acciones -->
+        <div class="card mb-2">
+          <div class="card-header py-1">
+            <h5 class="mb-0">Acciones Disponibles</h5>
+          </div>
+          <div class="card-body py-2">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item py-1">
+                <strong>Buscar:</strong> Filtra la lista de visitantes mediante campos de texto o selección para localizar registros específicos.
+              </li>
+              <li class="list-group-item py-1">
+                <strong>Limpiar Filtros:</strong> Restablece los filtros aplicados para mostrar la lista completa de visitantes.
+              </li>
+            </ul>
+          </div>
+        </div>
+  
+        <!-- Nota (OPCIONAL) -->
+        <div class="alert alert-warning py-2 mb-0">
+          <h5 class="alert-heading">Nota:</h5>
+          <p class="mb-0 small">Verifica la información antes de realizar cambios o eliminar registros de visitantes. Asegúrate de que los datos de los visitantes y autorizadores sean correctos.</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer py-2">
+      <button type="button" class="btn btn-primary" (click)="modal.close()">Entendido</button>
+    </div>
+  </ng-template>
+  

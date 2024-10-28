@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {NgIf} from "@angular/common";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Auth, VisitorTypeAccessDictionary} from "../../../models/authorize.model";
@@ -32,8 +32,10 @@ import {TransformResponseService} from "../../../services/transform-response.ser
   styleUrl: './access-list.component.css'
 })
 export class AccessListComponent implements OnInit, AfterViewInit {
+
   @ViewChild('filterComponent') filterComponent!: CadastrePlotFilterButtonsComponent<AccessModel>;
   @ViewChild('table', {static: true}) tableName!: ElementRef<HTMLTableElement>;
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
 
   //#region SERVICIOS
   private router = inject(Router)
@@ -355,4 +357,8 @@ export class AccessListComponent implements OnInit, AfterViewInit {
       Autorizador: `${item.authorizer?.name || ''} ${item.authorizer?.last_name || ''}`
     }));
   }
+
+  onInfoButtonClick() {
+    this.modalService.open(this.infoModal, { size: 'lg' });
+    }
 }

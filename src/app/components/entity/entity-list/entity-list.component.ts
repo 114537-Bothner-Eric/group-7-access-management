@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {
     CadastrePlotFilterButtonsComponent
 } from "../../accesses/cadastre-access-filter-buttons/cadastre-plot-filter-buttons.component";
@@ -28,8 +28,10 @@ import {VisitorService} from "../../../services/visitor.service";
   styleUrl: './entity-list.component.css'
 })
 export class EntityListComponent  implements OnInit, AfterViewInit {
+
   @ViewChild('filterComponent') filterComponent!: CadastrePlotFilterButtonsComponent<Visitor>;
   @ViewChild('table', {static: true}) tableName!: ElementRef<HTMLTableElement>;
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
 
   //#region SERVICIOS
   private router = inject(Router)
@@ -340,4 +342,9 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
       Tipos: item.visitor_types?.map(type => this.translateTable(type, this.typeDictionary)).join(', '), // Traducir cada tipo y unirlos en una cadena
     }));
   }
+
+
+  onInfoButtonClick() {
+    this.modalService.open(this.infoModal, {centered: true, size: 'lg'});
+    }
 }

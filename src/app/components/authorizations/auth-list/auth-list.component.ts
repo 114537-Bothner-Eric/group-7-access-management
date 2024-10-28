@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {Auth, AuthFilters, AuthRange, VisitorTypeAccessDictionary} from "../../../models/authorize.model";
 import {Router} from "@angular/router";
 import {FormBuilder, FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -32,6 +32,7 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
 
   @ViewChild('filterComponent') filterComponent!: CadastrePlotFilterButtonsComponent<AccessModel>;
   @ViewChild('table', {static: true}) tableName!: ElementRef<HTMLTableElement>;
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
 
   //#region SERVICIOS
   private router = inject(Router)
@@ -386,4 +387,8 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
       Autorizador: `${item.authorizer.name} ${item.authorizer.last_name}` // Combina el nombre y apellido del autorizador
     }));
   }
+
+  onInfoButtonClick() {
+    this.modalService.open(this.infoModal, { size: 'lg' });
+    }
 }

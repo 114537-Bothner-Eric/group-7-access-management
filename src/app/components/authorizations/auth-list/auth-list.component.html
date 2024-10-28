@@ -10,8 +10,10 @@
          -->
     <app-cadastre-plot-filter-buttons
       #filterComponent
-      [itemsList]="list"
+      [itemsList]="completeList"
       [tableName]="tableName.nativeElement"
+      [heads]="heads"
+      [props]="props"
       formPath="/auth/form"
       [dictionaries]="dictionaries"
       objectName="AUTORIZACION"></app-cadastre-plot-filter-buttons>
@@ -96,7 +98,7 @@
                 {{ item.visitor.name + ' ' + (item.visitor.last_name ? item.visitor.last_name : '') }}
               </td>
               <td>
-                {{ item.visitor.doc_type + ' ' + item.visitor.doc_number }}
+                {{ (item.visitor.doc_type === "PASSPORT" ? "PASAPORTE" : item.visitor.doc_type) + ' ' + item.visitor.doc_number }}
               </td>
               <td>
                 {{ translateTable(item.visitor_type, typeDictionary) }}
@@ -132,14 +134,23 @@
       <div class="ms-auto">
       </div>
 
-      <ngb-pagination
-        [(page)]="currentPage"
-        [pageSize]="pageSize"
-        [collectionSize]="totalItems"
-        (pageChange)="onPageChange($event)"
-        [maxSize]="5"
-        [boundaryLinks]="false"
-      ></ngb-pagination>
+      <div class="d-flex">
+
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="totalItems"
+          (pageChange)="onPageChange($event)"
+          [maxSize]="5"
+          [boundaryLinks]="false"
+        ></ngb-pagination>
+
+        <div class="ms-2">
+          <button class="btn btn-outline-secondary disabled">
+            <i class="bi bi-info-circle"></i>
+          </button>
+        </div>
+      </div>
 
 
     </div>

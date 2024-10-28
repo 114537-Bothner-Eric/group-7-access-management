@@ -55,6 +55,9 @@ export class AccessListComponent implements OnInit, AfterViewInit {
   totalItems: number = 0;
   //#endregion
 
+  heads: string[] =["Visitante", "Documento", "Tipo", "Accion", "Hora", "Vehículo", "Comentario", "Autorizador"]
+  props: string[] =["Visitante", "Documento", "Tipo", "Accion", "Hora", "Vehículo", "Comentario", "Autorizador" ]
+
   //#region ATT de ACTIVE
   retrieveByActive: boolean | undefined = true;
   //#endregion
@@ -90,10 +93,13 @@ export class AccessListComponent implements OnInit, AfterViewInit {
   //#region GET_ALL
   getAll() {
     this.accessService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
-        let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
-        response.content.forEach(data => {
-          data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
+      console.log(data)
+        data.forEach(date => {
+          date.authorizer = this.authorizerCompleterService.completeAuthorizer(date.authorizer_id)
         })
+      this.completeList = this.transformListToTableData(data);
+        let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
+
 
         this.list = response.content;
         this.filteredList = [...this.list]
@@ -336,4 +342,17 @@ export class AccessListComponent implements OnInit, AfterViewInit {
   //#endregion
 
   protected readonly oninput = oninput;
+
+  transformListToTableData(list :any) {
+    return list.map((item: { first_name: any; last_name: any; doc_type: any; doc_number: any; visitor_type: any; action: any; action_date: any; vehicle_reg: any; comments: any; authorizer: { name: any; last_name: any; }; }) => ({
+      Visitante: `${item.first_name} ${item.last_name}`,
+      Documento: `${(item.doc_type === "PASSPORT" ? "PASAPORTE" : item.doc_type)} ${item.doc_number}`,
+      Tipo: this.translateTable(item.visitor_type, this.typeDictionary),
+      Accion: this.translateTable(item.action, this.actionDictionary),
+      Hora: this.transformDate(item.action_date),
+      Vehículo: item.vehicle_reg || 'N/A',  // 'N/A' si no hay registro de vehículo
+      Comentario: item.comments || 'N/A',
+      Autorizador: `${item.authorizer?.name || ''} ${item.authorizer?.last_name || ''}`
+    }));
+  }
 }

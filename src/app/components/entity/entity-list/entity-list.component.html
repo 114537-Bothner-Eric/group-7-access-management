@@ -10,8 +10,10 @@
          -->
     <app-cadastre-plot-filter-buttons
       #filterComponent
-      [itemsList]="list"
+      [itemsList]="completeList"
       [tableName]="tableName.nativeElement"
+      [heads]="heads"
+      [props]="props"
       formPath="/entity/form"
       [dictionaries]="dictionaries"
       objectName="ACCESOS"></app-cadastre-plot-filter-buttons>
@@ -90,7 +92,7 @@
                 {{ item.name + ' ' + (item.last_name == null ? '' : item.last_name) }}
               </td>
               <td>
-                {{ item.doc_type + ' ' + item.doc_number }}
+                {{ (item.doc_type === "PASSPORT" ? "PASAPORTE" : item.doc_type) + ' ' + item.doc_number }}
               </td>
               <td>
                 @for (type of item.visitor_types; track $index){
@@ -149,14 +151,23 @@
       <div class="ms-auto">
       </div>
 
-      <ngb-pagination
-        [(page)]="currentPage"
-        [pageSize]="pageSize"
-        [collectionSize]="totalItems"
-        (pageChange)="onPageChange($event)"
-        [maxSize]="5"
-        [boundaryLinks]="false"
-      ></ngb-pagination>
+      <div class="d-flex">
+
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="totalItems"
+          (pageChange)="onPageChange($event)"
+          [maxSize]="5"
+          [boundaryLinks]="false"
+        ></ngb-pagination>
+
+        <div class="ms-2">
+          <button class="btn btn-outline-secondary disabled">
+            <i class="bi bi-info-circle"></i>
+          </button>
+        </div>
+      </div>
 
     </div>
   </div>

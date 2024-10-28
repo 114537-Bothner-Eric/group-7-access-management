@@ -1,144 +1,151 @@
 <h1>Lista de Accesos</h1>
-  <div class="card-body p-2 mt-3">
-    <!-- ESTE COMPONENTE LO VAN A TENER QUE MODIFICAR ES EL DEL BUSCAR, EXPORTAR, ETC -->
-    <!-- @param itemList => Mandan la lista con la cual hacen la tabla
-         @param tableName => Mandan el nombre de la tabla el que definen con #
-         @param tableName => Mandan el nombre de la tabla el que definen con #
-         @param formPath => Van a poner la ruta de su formulario para crear uno nuevo
-         @param dictionaries => En caso de usar diccionarios mandenlos, si no los mandan no pasa nada
-         @param objectName => Hace referencia al nombre de su objeto para guardar el archivo pdf o excel. Ej: 25/10/2024_LOTES
-         -->
-    <app-cadastre-plot-filter-buttons
-      #filterComponent
-      [itemsList]="completeList"
-      [tableName]="tableName.nativeElement"
-      formPath="/access/form"
-      [dictionaries]="dictionaries"
-      objectName="ACCESOS"></app-cadastre-plot-filter-buttons>
+<div class="card-body">
+  <!-- ESTE COMPONENTE LO VAN A TENER QUE MODIFICAR ES EL DEL BUSCAR, EXPORTAR, ETC -->
+  <!-- @param itemList => Mandan la lista con la cual hacen la tabla
+       @param tableName => Mandan el nombre de la tabla el que definen con #
+       @param tableName => Mandan el nombre de la tabla el que definen con #
+       @param formPath => Van a poner la ruta de su formulario para crear uno nuevo
+       @param dictionaries => En caso de usar diccionarios mandenlos, si no los mandan no pasa nada
+       @param objectName => Hace referencia al nombre de su objeto para guardar el archivo pdf o excel. Ej: 25/10/2024_LOTES
+       -->
+  <app-cadastre-plot-filter-buttons
+    #filterComponent
+    [itemsList]="completeList"
+    [tableName]="tableName.nativeElement"
+    [heads]="heads"
+    [props]="props"
+    formPath="/access/form"
+    [dictionaries]="dictionaries"
+    objectName="ACCESOS"></app-cadastre-plot-filter-buttons>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div class="btn-group me-5" role="group">
-        <div class="d-flex align-items-center">
-          <div class="btn-group me-2">
-            <button type="button" class="btn btn-outline-danger" (click)="changeFilterMode(filterTypes.NOTHING)">
-              <i class="bi bi-trash-fill"></i> Limpiar filtros
-            </button>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="btn-group me-5" role="group">
+      <div class="d-flex align-items-center">
+        <div class="btn-group me-2">
+          <button type="button" class="btn btn-outline-danger" (click)="changeFilterMode(filterTypes.NOTHING)">
+            <i class="bi bi-trash-fill"></i> Limpiar filtros
+          </button>
 
-            <button type="button" class="btn btn-outline-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi bi-funnel-fill"></i> Filtros
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.VISITOR_TYPE)">Tipo de visitante</a></li>
-              <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.ACTION)">Acción</a></li>
-            </ul>
-          </div>
-
-          @if (applyFilterWithNumber === true || applyFilterWithCombo === true) {
-            <div class="d-flex">
-              @if (applyFilterWithNumber === true) {
-                <input type="number" class="form-control me-2" id="filter-number" [(ngModel)]="filterInput" name="ngModel" placeholder="Número">
-              } @else if (applyFilterWithCombo === true) {
-                <select id="content-filter" class="form-select me-2" [(ngModel)]="filterInput" name="ngModel">
-                  <option disabled selected>Selecciona un filtro</option>
-                  @for (content of contentForFilterCombo; track content) {
-                    <option value="{{content}}">{{content}}</option>
-                  }
-                </select>
-              }
-              <div class="ms-auto">
-                <button class="btn btn-dark" type="button" (click)="confirmFilter()">Buscar</button>
-              </div>
-            </div>
-          }
+          <button type="button" class="btn btn-outline-info dropdown-toggle" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+            <i class="bi bi-funnel-fill"></i> Filtros
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.VISITOR_TYPE)">Tipo de visitante</a></li>
+            <li><a class="dropdown-item" (click)="changeFilterMode(filterTypes.ACTION)">Acción</a></li>
+          </ul>
         </div>
+
+        @if (applyFilterWithNumber === true || applyFilterWithCombo === true) {
+          <div class="d-flex">
+            @if (applyFilterWithNumber === true) {
+              <input type="number" class="form-control me-2" id="filter-number" [(ngModel)]="filterInput" name="ngModel"
+                     placeholder="Número">
+            } @else if (applyFilterWithCombo === true) {
+              <select id="content-filter" class="form-select me-2" [(ngModel)]="filterInput" name="ngModel">
+                <option disabled selected>Selecciona un filtro</option>
+                @for (content of contentForFilterCombo; track content) {
+                  <option value="{{content}}">{{ content }}</option>
+                }
+              </select>
+            }
+            <div class="ms-auto">
+              <button class="btn btn-dark" type="button" (click)="confirmFilter()">Buscar</button>
+            </div>
+          </div>
+        }
       </div>
-
-
-<!--      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-        <input type="radio" class="btn-check"
-               name="btnradio" id="btnradio1"
-               autocomplete="off" (change)="changeActiveFilter(true)" checked>
-        <label class="btn btn-outline-primary" for="btnradio1">Lotes Activos</label>
-
-        <input type="radio" class="btn-check"
-               name="btnradio" id="btnradio2"
-               autocomplete="off" (change)="changeActiveFilter(false)">
-        <label class="btn btn-outline-primary" for="btnradio2">Lotes Inactivos</label>
-
-        <input type="radio" class="btn-check"
-               name="btnradio" id="btnradio3"
-               autocomplete="off" (change)="changeActiveFilter()">
-        <label class="btn btn-outline-primary" for="btnradio3">Todos</label>
-      </div>-->
     </div>
 
-    <div class="table-container">
-      <table class="table table-striped fixed-table" style="border: 1px solid rgba(0, 0, 0, 0.150); border-collapse: collapse;" #table>
-        <thead>
-        <tr>
-          <th scope="col">Visitante</th>
-          <th scope="col">Documento</th>
-          <th scope="col">Tipo</th>
-          <th scope="col">Accion</th>
-          <th scope="col">Hora</th>
-          <th scope="col">Vehículo</th>
-          <th scope="col">Comentario</th>
-          <th scope="col">Autorizador</th>
-        </tr>
-        </thead>
-        <tbody>
-          @for (item of (filteredList.length ? filteredList : list); track item) {
 
-            <tr>
-              <td>
-                <!--TODO icono-->
-                {{ item.first_name + ' ' + item.last_name }}
-              </td>
-              <td>
-                {{ item.doc_type + ' ' + item.doc_number }}
-              </td>
-              <td>
-                {{ translateTable(item.visitor_type, typeDictionary) }}
-              </td>
-              <td>
-                {{ translateTable(item.action, actionDictionary) }}
-              </td>
-              <td>
-                {{ transformDate(item.action_date) }}
-              </td>
-              <td>
-                {{ item.vehicle_reg }}
-              </td>
-              <td>
-                {{ item.comments }}
-              </td>
-              <td>
-                <!--TODO icono-->
-                {{ item.authorizer.name + ' ' + item.authorizer.last_name }}
-              </td>
-            </tr>
+    <!--      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            <input type="radio" class="btn-check"
+                   name="btnradio" id="btnradio1"
+                   autocomplete="off" (change)="changeActiveFilter(true)" checked>
+            <label class="btn btn-outline-primary" for="btnradio1">Lotes Activos</label>
 
-          }
-        </tbody>
-      </table>
+            <input type="radio" class="btn-check"
+                   name="btnradio" id="btnradio2"
+                   autocomplete="off" (change)="changeActiveFilter(false)">
+            <label class="btn btn-outline-primary" for="btnradio2">Lotes Inactivos</label>
+
+            <input type="radio" class="btn-check"
+                   name="btnradio" id="btnradio3"
+                   autocomplete="off" (change)="changeActiveFilter()">
+            <label class="btn btn-outline-primary" for="btnradio3">Todos</label>
+          </div>-->
+  </div>
+
+  <div class="table-container">
+    <table class="table table-striped fixed-table"
+           style="border: 1px solid rgba(0, 0, 0, 0.150); border-collapse: collapse;" #table>
+      <thead>
+      <tr>
+        <th scope="col">Visitante</th>
+        <th scope="col">Documento</th>
+        <th scope="col">Tipo</th>
+        <th scope="col">Accion</th>
+        <th scope="col">Hora</th>
+        <th scope="col">Vehículo</th>
+        <th scope="col">Comentario</th>
+        <th scope="col">Autorizador</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (item of (filteredList.length ? filteredList : list); track item) {
+
+          <tr>
+            <td>
+              <!--TODO icono-->
+              {{ item.first_name + ' ' + item.last_name }}
+            </td>
+            <td>
+              {{ (item.doc_type === "PASSPORT" ? "PASAPORTE" : item.doc_type) + ' ' + item.doc_number }}
+            </td>
+            <td>
+              {{ translateTable(item.visitor_type, typeDictionary) }}
+            </td>
+            <td>
+              {{ translateTable(item.action, actionDictionary) }}
+            </td>
+            <td>
+              {{ transformDate(item.action_date) }}
+            </td>
+            <td>
+              {{ item.vehicle_reg }}
+            </td>
+            <td>
+              {{ item.comments }}
+            </td>
+            <td>
+              <!--TODO icono-->
+              {{ item.authorizer.name + ' ' + item.authorizer.last_name }}
+            </td>
+          </tr>
+
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="form-group mb-3 me-2">
+      <select
+        id="itemsPerPage"
+        class="form-select"
+        [(ngModel)]="pageSize"
+        (change)="onItemsPerPageChange()"
+      >
+        @for (option of sizeOptions; track $index) {
+          <option [value]="option">{{ option }} Elementos</option>
+        }
+      </select>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center mt-3">
-      <div class="form-group mb-3 me-2">
-        <select
-          id="itemsPerPage"
-          class="form-select"
-          [(ngModel)]="pageSize"
-          (change)="onItemsPerPageChange()"
-        >
-          @for(option of sizeOptions; track $index) {
-            <option [value]="option">{{ option }} Elementos</option>
-          }
-        </select>
-      </div>
+    <div class="ms-auto">
+    </div>
 
-      <div class="ms-auto">
-      </div>
+    <div class="d-flex">
 
       <ngb-pagination
         [(page)]="currentPage"
@@ -149,6 +156,13 @@
         [boundaryLinks]="false"
       ></ngb-pagination>
 
-
+      <div class="ms-2">
+        <button class="btn btn-outline-secondary disabled">
+          <i class="bi bi-info-circle"></i>
+        </button>
+      </div>
     </div>
+
+
   </div>
+</div>

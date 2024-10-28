@@ -47,10 +47,23 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
   pageSize: number = 10
   sizeOptions: number[] = [10, 25, 50]
   list: Auth[] = [];
+  completeList: [] = [];
   filteredList: Auth[] = [];
   lastPage: boolean | undefined
   totalItems: number = 0;
   //#endregion
+  heads: string[] =["Nro de Lote",
+    "Visitante",
+    "Documento",
+    "Tipo",
+    "Horarios",
+    "Autorizador"]
+  props: string[] =["Nro de Lote",
+    "Visitante",
+    "Documento",
+    "Tipo",
+    "Horarios",
+    "Autorizador"]
 
   //#region ATT de ACTIVE
   retrieveByActive: boolean | undefined = true;
@@ -88,10 +101,12 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
   //#region GET_ALL
   getAll() {
     this.authService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
-        let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
-        response.content.forEach(data => {
-          data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
+        data.forEach(date => {
+          date.authorizer = this.authorizerCompleterService.completeAuthorizer(date.authorizer_id)
         })
+        this.completeList = this.transformLotListToTableData(data);
+        let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
+
 
         this.list = response.content;
         this.filteredList = [...this.list]
@@ -361,5 +376,14 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
   }
 
   //#endregion
-
+  transformLotListToTableData(list: any) {
+    return list.map((item: { plot_id: any; visitor: { name: any; last_name: any; doc_type: any; doc_number: any; }; visitor_type: any; auth_ranges: AuthRange[]; authorizer: { name: any; last_name: any; }; }) => ({
+      'Nro de Lote': item.plot_id || 'No aplica', // Manejo de 'No aplica' para plot_id
+      Visitante: `${item.visitor.name} ${item.visitor.last_name || ''}`, // Combina el nombre y el apellido
+      Documento: `${(item.visitor.doc_type === "PASSPORT" ? "PASAPORTE" : item.visitor.doc_type)} ${item.visitor.doc_number}`, // Combina el tipo de documento y el número
+      Tipo: this.translateTable(item.visitor_type, this.typeDictionary), // Traduce el tipo de visitante
+      Horarios: this.transformAuthRanges(item.auth_ranges), // Aplica la función para transformar los rangos de autorización
+      Autorizador: `${item.authorizer.name} ${item.authorizer.last_name}` // Combina el nombre y apellido del autorizador
+    }));
+  }
 }

@@ -45,10 +45,13 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
   pageSize: number = 10
   sizeOptions: number[] = [10, 25, 50]
   list: Visitor[] = [];
+  completeList: [] = [];
   filteredList: Visitor[] = [];
   lastPage: boolean | undefined
   totalItems: number = 0;
   //#endregion
+  heads: string[] =["Nombre","Documento","Tipos"]
+  props: string[] =["Nombre","Documento","Tipos"]
 
   //#region ATT de ACTIVE
   retrieveByActive: boolean | undefined = true;
@@ -85,10 +88,12 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
   //#region GET_ALL
   getAll() {
     this.visitorService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {
+
+        console.log(data)
+        this.completeList = this.transformListToTableData(data);
+        console.log(this.completeList)
         let response = this.transformResponseService.transformResponse(data,this.currentPage, this.pageSize, this.retrieveByActive)
-        response.content.forEach(data => {
-          data.authorizer = this.authorizerCompleterService.completeAuthorizer(data.authorizer_id)
-        })
+
 
         this.list = response.content;
         this.filteredList = [...this.list]
@@ -321,5 +326,18 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
   }
   deleteVisitor(id:number){
 
+  }
+  transformListToTableData(list: any) {
+    return list.map((item: {
+      name: any;
+      last_name: any;
+      doc_type: any;
+      doc_number: any;
+      visitor_types: any[]; // Suponiendo que visitor_types es un array
+    }) => ({
+      Nombre: `${item.name} ${item.last_name}`,
+      Documento: `${item.doc_type === "PASSPORT" ? "PASAPORTE" : item.doc_type} ${item.doc_number}`,
+      Tipos: item.visitor_types?.map(type => this.translateTable(type, this.typeDictionary)).join(', '), // Traducir cada tipo y unirlos en una cadena
+    }));
   }
 }

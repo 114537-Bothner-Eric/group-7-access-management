@@ -1,7 +1,7 @@
-import { Component, inject, Input } from '@angular/core';
-import { Subject } from 'rxjs';
-import { CadastreExcelService } from '../../../services/cadastre-excel.service';
-import { Router } from '@angular/router';
+import {Component, inject, Input} from '@angular/core';
+import {Subject} from 'rxjs';
+import {CadastreExcelService} from '../../../services/cadastre-excel.service';
+import {Router} from '@angular/router';
 import {AccessService} from "../../../services/access.service";
 import {TransformResponseService} from "../../../services/transform-response.service";
 import {FormsModule} from "@angular/forms";
@@ -30,11 +30,13 @@ export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
   @Input() tableName!: HTMLTableElement;
   // Input to receive a generic list from the parent component
   @Input() itemsList!: T[];
+  @Input() heads!: string[];
+  @Input() props!: string[];
   // Input to redirect to the form.
   @Input() formPath: string = "";
   // Represent the name of the object for the exports.
   // Se va a usar para los nombres de los archivos.
-  @Input() objectName : string = ""
+  @Input() objectName: string = ""
   // Represent the dictionaries of ur object.
   // Se va a usar para las traducciones de enum del back.
   @Input() dictionaries: Array<{ [key: string]: any }> = [];
@@ -44,13 +46,14 @@ export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
   // Observable that emits filtered owner list
   filter$ = this.filterSubject.asObservable();
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   // Se va a usar para los nombres de los archivos.
   getActualDayFormat() {
     const today = new Date();
 
-    const formattedDate = today.getDate() + '-' +(today.getMonth() + 1 )+ '-' + today.getFullYear();
+    const formattedDate = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
 
     return formattedDate;
   }
@@ -60,16 +63,9 @@ export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
    * Calls the `exportTableToPdf` method from the `CadastreExcelService`.
    */
   exportToPdf() {
-    this.service.getAll(0, this.LIMIT_32BITS_MAX, true).subscribe(
-      data => {
-        let response = this.transformResponseService.transformResponse(data, 0, this.LIMIT_32BITS_MAX, true)
-        this.excelService.exportTableToPdf(this.tableName, `${this.getActualDayFormat()}_${this.objectName}`);
-      },
-      error => {
-        console.log("Error retrieved all, on export component.")
+        this.excelService.exportListToPdf(this.itemsList, this.heads, this.props, `${this.getActualDayFormat()}_${this.objectName}`);
 
-      }
-    )
+
   }
 
   /**
@@ -78,16 +74,11 @@ export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
    */
   //#region TIENEN QUE MODIFICAR EL SERIVCIO CON SU GETALL
   exportToExcel() {
-    this.service.getAll(0, this.LIMIT_32BITS_MAX, true).subscribe(
-      data => {
-        let response = this.transformResponseService.transformResponse(data, 0, this.LIMIT_32BITS_MAX, true)
-        this.excelService.exportListToExcel(response.content, `${this.getActualDayFormat()}_${this.objectName}`);
-      },
-      error => {
-        console.log("Error retrieved all, on export component.")
-      }
-    )
+
+        this.excelService.exportListToExcel(this.itemsList, this.heads, this.props, `${this.getActualDayFormat()}_${this.objectName}`);
+
   }
+
   //#endregion
 
   /**
@@ -100,7 +91,7 @@ export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
   onFilterTextBoxChanged(event: Event) {
     const target = event.target as HTMLInputElement;
 
-      this.filterSubject.next(target.value.toLowerCase());
+    this.filterSubject.next(target.value.toLowerCase());
 
   }
 
@@ -130,7 +121,7 @@ export class CadastrePlotFilterButtonsComponent<T extends Record<string, any>> {
     this.router.navigate([this.formPath]);
   }
 
-  clearFilter(){
-this.filterText = ""
+  clearFilter() {
+    this.filterText = ""
   }
 }

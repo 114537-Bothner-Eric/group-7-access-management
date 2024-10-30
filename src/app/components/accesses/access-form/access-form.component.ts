@@ -5,7 +5,7 @@ import {AccessService} from "../../../services/access.service";
 import {AuthService} from "../../../services/auth.service";
 import Swal from "sweetalert2";
 import {LoginService} from "../../../services/login.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {VisitorService} from "../../../services/visitor.service";
 
 @Component({
@@ -24,6 +24,7 @@ export class AccessFormComponent implements OnInit {
   checkButtonDisabled = true;
 
   private accessService = inject(AccessService)
+  private url = inject(ActivatedRoute)
 
   constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router: Router, private visitorService: VisitorService) {
   }
@@ -43,6 +44,16 @@ export class AccessFormComponent implements OnInit {
     this.accessForm.get('last_name')?.disable();
     this.accessForm.get('first_name')?.disable();
     this.accessForm.get('plot_id')?.disable();
+
+    const lote = this.url.snapshot.queryParamMap.get('lote');
+    const doc_number = this.url.snapshot.queryParamMap.get('doc_number');
+
+    if(lote && doc_number){
+      this.accessForm.get('doc_number')?.patchValue(doc_number);
+      this.accessForm.get('plot_id')?.patchValue(lote);
+      this.autocompleteFields(Number(doc_number) , lote);
+    }
+
   }
 
   onSubmit() {
@@ -96,36 +107,43 @@ let plate = this.accessForm.get('vehicle_reg')?.value
   }
 
   onDocNumberChange(event: any) {
-    let document = this.accessForm.get('doc_number')?.value
+    let document = this.accessForm.get('doc_number')?.value;
+    this.autocompleteFields(document); // Llama a la función para autocompletar
+  }
+
+
+  autocompleteFields(document: number , lote?: string) {
     if (document != null) {
       this.checkButtonDisabled = false;
     } else {
       this.checkButtonDisabled = true;
       return;
     }
+debugger
     this.visitorService.getVisitor(document).subscribe(data => {
+      
       switch (data.body) {
         case null:
           this.accessForm.get('last_name')?.setValue("");
           this.accessForm.get('first_name')?.setValue("");
-          this.accessForm.get('doc_number')?.setErrors({unauthorized: true});
+          this.accessForm.get('doc_number')?.setErrors({ unauthorized: true });
           break;
         default:
           this.accessForm.get('last_name')?.setValue(data.body.last_name);
           this.accessForm.get('first_name')?.setValue(data.body.name);
+          this.accessForm.get('plot_id')?.setValue(lote);
           this.accessForm.get('doc_number')?.setErrors(null);
-          let plots = ""
+          let plots = "";
           this.authService.getValid(document).subscribe(data => {
             data.forEach(auth => {
-              plots += auth.plot_id?.toString() + ", "
-            })
-            plots = plots.slice(0, plots.length - 2)
-            this.accessForm.get('plot_id')?.setValue(plots)
-          })
+              plots += auth.plot_id?.toString() + ", ";
+            });
+            plots = plots.slice(0, plots.length - 2);
+            this.accessForm.get('plot_id')?.setValue(plots);
+          });
       }
-    })
+    });
   }
-
   private markAllAsTouched(): void {
     Object.values(this.accessForm.controls).forEach(control => {
       control.markAsTouched();

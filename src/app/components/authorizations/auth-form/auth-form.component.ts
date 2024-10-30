@@ -16,7 +16,7 @@ import { MainContainerComponent } from 'ngx-dabd-grupo01';
     ReactiveFormsModule,
     NgIf,
     NgClass,
-    MainContainerComponent,
+    MainContainerComponent
   ],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.css'
@@ -131,7 +131,7 @@ export class AuthFormComponent implements OnInit {
           }
         }).then((result) => {
           if (result.isDismissed) {
-            this.router.navigate(['/access/form']);
+            this.router.navigate(['/access/form'] , {queryParams : {doc_number : formData.visitor_request.doc_number , lote : formData.plot_id}});
           }
         });
       });

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule, NgClass, NgIf} from '@angular/common';
 import {AccessService} from "../../../services/access.service";
@@ -22,6 +22,8 @@ import {VisitorService} from "../../../services/visitor.service";
 export class AccessFormComponent implements OnInit {
   accessForm: FormGroup = {} as FormGroup;
   checkButtonDisabled = true;
+
+  private accessService = inject(AccessService)
 
   constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router: Router, private visitorService: VisitorService) {
   }
@@ -65,14 +67,14 @@ let plate = this.accessForm.get('vehicle_reg')?.value
               }
             }).then((result) => {
               if (result.isDismissed) {
-                this.authService.createAccess(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
+                this.accessService.createAccess(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
                   Swal.fire('Registro exitoso...', "Se registró correctamente", 'success');
                   this.ngOnInit()
                 });
               }
             });
           } else {
-            this.authService.createAccess(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
+            this.accessService.createAccess(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
               Swal.fire('Registro exitoso...', "Se registró correctamente", 'success');
               this.ngOnInit()
             });

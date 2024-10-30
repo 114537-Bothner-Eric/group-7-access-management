@@ -26,13 +26,6 @@ export class AuthService {
     return this.http.get<Auth[]>(this.apiUrl);
   }
 
-  createAccess(data: any, userId: string): Observable<AccessModel> {
-    const headers = new HttpHeaders({
-      'x-user-id': userId
-    });
-
-    return this.http.post<AccessModel>(this.apiUrl + '/authorize', data, { headers });
-  }
 
   getValid(document: number): Observable<Auth[]> {
     return this.http.get<Auth[]>(this.apiUrl + '/valids/' + document.toString());

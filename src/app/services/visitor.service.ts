@@ -1,8 +1,19 @@
 import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {Auth} from "../models/authorize.model";
-import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams, HttpResponse} from "@angular/common/http";
 import {SendVisitor, Visitor} from "../models/visitor.model";
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  total_elements: number;
+}
+
+export enum filterVisitor {
+  NOTHING = 'NOTHING',
+  DOCUMENT_NUMBER = 'DOCUMENT_NUMBER',
+  DOCUMENT_TYPE = 'DOCUMENT_TYPE'
+}
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +27,17 @@ export class VisitorService {
   constructor(private http: HttpClient) {
   }
 
-  getAll(page: number, size: number, isActive?: boolean): Observable<Visitor[]> {
-    return this.http.get<Visitor[]>(this.apiUrl);
+  getAll(page: number = 0, size: number = 10 , filter?: string , isActive?: boolean): Observable<PaginatedResponse<Visitor>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())  
+      .set('active', 'true');
+
+      if(filter){
+        params = params.set ('filter', filter) 
+      }
+
+    return this.http.get<PaginatedResponse<Visitor>>(this.apiUrl , { params });
   }
 
   getVisitor(visitorId: number): Observable<HttpResponse<Visitor>> {
@@ -25,8 +45,12 @@ export class VisitorService {
   }
 
 
-  upsertVisitor(visitor: SendVisitor): Observable<HttpResponse<Visitor>> {
-    return this.http.put<Visitor>(this.apiUrl, visitor, {observe: 'response'});
+  upsertVisitor(visitor: SendVisitor , userId :number): Observable<HttpResponse<Visitor>> {
+    
+    const header = new HttpHeaders({
+      'x-user-id': userId
+    })
+    return this.http.put<Visitor>(this.apiUrl, visitor, {observe: 'response' , headers: header});
   }
 
   checkAccess(plate: string, action: string): Observable<Boolean> {

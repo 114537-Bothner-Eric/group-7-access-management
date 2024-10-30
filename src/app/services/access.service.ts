@@ -29,4 +29,11 @@ export class AccessService {
     return this.http.get<AccessModel[]>(this.apiUrl);
   }
 
+  createAccess(data: any, userId: string): Observable<AccessModel> {
+    const headers = new HttpHeaders({
+      'x-user-id': userId
+    });
+
+    return this.http.post<AccessModel>(this.apiUrl + '/authorize', data, { headers });
+  }
 }

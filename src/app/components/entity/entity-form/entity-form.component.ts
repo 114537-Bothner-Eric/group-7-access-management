@@ -49,14 +49,14 @@ export class EntityFormComponent implements OnInit {
     if (this.entityForm.valid) {
       const formData = this.entityForm.value;
       formData.birth_date = formatFormDate(formData.birth_date);
-      this.visitorService.upsertVisitor(formData).subscribe((response) => {
+      this.visitorService.upsertVisitor(formData , this.loginService.getLogin().id).subscribe((response) => {
         console.log(response)
         Swal.fire('Registro exitoso...', "Se registró correctamente", 'success');
         this.ngOnInit();
       },
         (error) => {
           if (error.status === 400) {
-            Swal.fire('Error de registro', 'Documento ya registrado.', 'error');
+            Swal.fire('Error de registro', error.error, 'error');
           } else {
             Swal.fire('Error inesperado', 'Ocurrió un error inesperado. Intente de nuevo más tarde.', 'error');
           }

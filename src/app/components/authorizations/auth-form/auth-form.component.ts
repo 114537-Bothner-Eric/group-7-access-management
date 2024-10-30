@@ -7,6 +7,7 @@ import {LoginService} from "../../../services/login.service";
 import Swal from 'sweetalert2';
 import {NgIf} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
+import { MainContainerComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-auth-form',
@@ -14,7 +15,8 @@ import {ActivatedRoute, Router} from "@angular/router";
   imports: [
     ReactiveFormsModule,
     NgIf,
-    NgClass
+    NgClass,
+    MainContainerComponent,
   ],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.css'

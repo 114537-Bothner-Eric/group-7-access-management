@@ -70,6 +70,7 @@ let plate = this.accessForm.get('vehicle_reg')?.value
                 this.accessService.createAccess(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
                   Swal.fire('Registro exitoso...', "Se registró correctamente", 'success');
                   this.ngOnInit()
+                  this.router.navigate(['/access/list']);
                 });
               }
             });
@@ -77,6 +78,7 @@ let plate = this.accessForm.get('vehicle_reg')?.value
             this.accessService.createAccess(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
               Swal.fire('Registro exitoso...', "Se registró correctamente", 'success');
               this.ngOnInit()
+              this.router.navigate(['/access/list']);
             });
           }
         })
@@ -151,6 +153,7 @@ let plate = this.accessForm.get('vehicle_reg')?.value
       });
       return
     }
+    debugger
     this.authService.getValid(document).subscribe(data => {
       if (data.length > 0) {
         Swal.fire('Autorizado', 'Tiene permitido el ingreso', "success")

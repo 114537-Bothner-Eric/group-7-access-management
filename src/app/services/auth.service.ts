@@ -28,6 +28,7 @@ export class AuthService {
 
 
   getValid(document: number): Observable<Auth[]> {
-    return this.http.get<Auth[]>(this.apiUrl + '/valids/' + document.toString());
+    const params = new HttpParams().set('docNumber', document);
+    return this.http.get<Auth[]>(this.apiUrl + '/valid' , { params });
   }
 }

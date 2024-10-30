@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthService} from "../../../services/auth.service";
 import {LoginService} from "../../../services/login.service";
@@ -8,6 +8,8 @@ import {NgClass, NgIf} from "@angular/common";
 import moment from "moment";
 import {SendVisitor} from "../../../old/visitor/models/visitor.model";
 import {VisitorService} from "../../../services/visitor.service";
+import { MainContainerComponent } from 'ngx-dabd-grupo01';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-entity-form',
@@ -16,15 +18,17 @@ import {VisitorService} from "../../../services/visitor.service";
     ReactiveFormsModule,
     NgIf,
     FormsModule,
-    NgClass
+    NgClass,
+    MainContainerComponent,
   ],
   templateUrl: './entity-form.component.html',
   styleUrl: './entity-form.component.css'
 })
 export class EntityFormComponent implements OnInit {
   entityForm: FormGroup = {} as FormGroup;
-
-  constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router: Router, private visitorService: VisitorService, private route: ActivatedRoute) {
+  router = inject(Router);
+  modal = inject(NgbModal);
+  constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private visitorService: VisitorService, private route: ActivatedRoute) {
   }
 
 
@@ -41,7 +45,7 @@ export class EntityFormComponent implements OnInit {
 
 
   onCancel() {
-    this.router.navigate(['/entity/list']);
+    this.modal.dismissAll();
   }
 
 
@@ -53,6 +57,7 @@ export class EntityFormComponent implements OnInit {
         console.log(response)
         Swal.fire('Registro exitoso...', "Se registró correctamente", 'success');
         this.ngOnInit();
+        this.modal.dismissAll();
       },
         (error) => {
           if (error.status === 400) {

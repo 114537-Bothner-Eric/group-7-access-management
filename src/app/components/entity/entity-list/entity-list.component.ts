@@ -92,6 +92,7 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
         if (visitor.doc_type === 'PASSPORT') {
           visitor.doc_type = 'PASS';
         }
+        visitor.visitor_types = visitor.visitor_types.map(this.traslateVisitorTypes);
         return visitor;
       });
 
@@ -183,6 +184,26 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
     XLSX.writeFile(workbook, this.getActualDayFormat() + '_visitantes.xlsx');
  }
  
+ traslateVisitorTypes(visitorType: string): string {
+   switch (visitorType) {
+     case 'VISITOR':
+       return 'Visitante';
+     case 'PROVIDER':
+       return 'Proveedor';
+     case 'EMERGENCY':
+       return 'Emergencia';
+     case 'PROVIDER_ORGANIZATION':
+       return 'Entidad';
+     case 'OWNER':
+       return 'Propietario';
+     case 'WORKER':
+       return 'Trabajador';
+      case 'EMPLOYEE':
+       return 'Empleado';   
+     default:
+       return 'No definido';
+   }
+ }
 
   filterVisitorsByDocumentType(docType: string): void {
       // Verifica si el tipo de documento está vacío
@@ -192,6 +213,21 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
           docType = 'PASS';
         }
         this.filteredVisitors = this.visitors.filter(visitor => visitor.doc_type === docType);
+      } else {
+        
+        this.filteredVisitors = [];
+      }
+    }
+
+
+    filterVisitorsByVisitorType(visitorType: string): void {
+      // Verifica si el tipo de documento está vacío
+      debugger;
+    
+      if (visitorType) {
+        this.filteredVisitors = this.visitors.filter(visitor => 
+          visitor.visitor_types.some(type => type === visitorType));
+          
       } else {
         
         this.filteredVisitors = [];
@@ -213,9 +249,9 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
           this.applyFilterWithCombo = false;
       
           break;
-        case filterVisitor.DOCUMENT_TYPE:
-          this.actualFilter = filterVisitor.DOCUMENT_TYPE;
-          this.contentForFilterCombo = ['DNI', 'PASAPORTE', 'CUIL', 'CUIT'];
+        case filterVisitor.VISITOR_TYPE:
+          this.actualFilter = filterVisitor.VISITOR_TYPE;
+          this.contentForFilterCombo = ['Propietario', 'Visitante', 'Trabajador', 'Proveedor' ,'Entidad' , 'Empleado' , 'Conviviente' , 'Emergencia'  ];	
           this.applyFilterWithNumber = false;
           this.applyFilterWithCombo = true;
           break;
@@ -236,8 +272,8 @@ export class EntityListComponent  implements OnInit, AfterViewInit {
           this.loadVisitors(this.filterInput);
           break;
     
-        case "DOCUMENT_TYPE":
-          this.filterVisitorsByDocumentType(this.filterInput);
+        case "VISITOR_TYPE":
+          this.filterVisitorsByVisitorType(this.filterInput);
           break;
     
         default:

@@ -12,7 +12,8 @@ export interface PaginatedResponse<T> {
 export enum filterVisitor {
   NOTHING = 'NOTHING',
   DOCUMENT_NUMBER = 'DOCUMENT_NUMBER',
-  DOCUMENT_TYPE = 'DOCUMENT_TYPE'
+  DOCUMENT_TYPE = 'DOCUMENT_TYPE',
+  VISITOR_TYPE = 'VISITOR_TYPE'
 }
 
 @Injectable({

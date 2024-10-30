@@ -1,10 +1,12 @@
 <app-main-container title="Nueva Autorización">
+  
   <form [formGroup]="authForm" (ngSubmit)="onSubmit()" class="row g-3 m-2">
+
     <!-- Terreno -->
     <div class="col-md-6">
       <div class="d-flex align-items-center flex-row">
         <label for="plot-id" class="form-label m-0">Número de lote<label class="text-danger">*</label></label>
-        <input type="number" list="plots" id="plot-id" class="form-control ms-2" formControlName="plot_id"
+        <input list="plots" id="plot-id" class="form-control ms-2" formControlName="plot_id"
                [ngClass]="{
           'is-invalid': authForm.get('plot_id')?.invalid && authForm.get('plot_id')?.touched
         }"/>

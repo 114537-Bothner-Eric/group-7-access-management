@@ -8,6 +8,8 @@ import Swal from 'sweetalert2';
 import {NgIf} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import { MainContainerComponent } from 'ngx-dabd-grupo01';
+import { OwnerSearchComponent } from "../../owner-search/owner-search.component";
+import { Owner } from '../../owner-search/service/own.service';
 
 @Component({
   selector: 'app-auth-form',
@@ -16,12 +18,14 @@ import { MainContainerComponent } from 'ngx-dabd-grupo01';
     ReactiveFormsModule,
     NgIf,
     NgClass,
-    MainContainerComponent
-  ],
+    MainContainerComponent,
+    OwnerSearchComponent
+],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.css'
 })
 export class AuthFormComponent implements OnInit {
+
   authForm: FormGroup = {} as FormGroup;
   plots: any[] = []
  paramRoutes = inject(ActivatedRoute);

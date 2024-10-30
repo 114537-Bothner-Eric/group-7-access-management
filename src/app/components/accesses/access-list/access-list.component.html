@@ -100,7 +100,7 @@
                 {{ item.first_name + ' ' + item.last_name }}
               </td>
               <td>
-                {{ (item.doc_type === "PASSPORT" ? "PASAPORTE" : item.doc_type) + ' ' + item.doc_number }}
+                {{ (item.doc_type === "PASSPORT" ? "PASS" : item.doc_type) + ' ' + item.doc_number }}
               </td>
               <td>
                 {{ translateTable(item.visitor_type, typeDictionary) }}

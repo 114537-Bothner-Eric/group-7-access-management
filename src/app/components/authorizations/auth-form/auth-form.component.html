@@ -4,7 +4,7 @@
     <div class="col-md-6">
       <div class="d-flex align-items-center flex-row">
         <label for="plot-id" class="form-label m-0">Número de lote<label class="text-danger">*</label></label>
-        <input list="plots" id="plot-id" class="form-control ms-2" formControlName="plot_id"
+        <input type="number" list="plots" id="plot-id" class="form-control ms-2" formControlName="plot_id"
                [ngClass]="{
           'is-invalid': authForm.get('plot_id')?.invalid && authForm.get('plot_id')?.touched
         }"/>

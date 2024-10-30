@@ -78,15 +78,33 @@
   </div>
 
   <!-- Acción (Entrada/Salida) -->
+
   <div class="col-md-6 mt-3">
     <div class="d-flex align-items-center flex-row">
-    <label for="action" class="form-label m-0">Acción</label><label class="text-danger">*</label>
-    <select id="action" class="form-select ms-4" formControlName="action">
-      <option value="ENTRY">Entrada</option>
-      <option value="EXIT">Salida</option>
-    </select>
+      <label class="form-label m-0">Acción</label><label class="text-danger">*</label>
+      <div class="ms-4">
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            id="entry"
+            formControlName="action"
+            value="ENTRY">
+          <label class="form-check-label" for="entry">Entrada</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            id="exit"
+            formControlName="action"
+            value="EXIT">
+          <label class="form-check-label" for="exit">Salida</label>
+        </div>
+      </div>
     </div>
   </div>
+
 
   <!-- Tipo de Vehículo -->
   <div class="col-md-6 mt-3">

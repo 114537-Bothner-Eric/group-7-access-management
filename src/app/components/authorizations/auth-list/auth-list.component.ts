@@ -338,7 +338,10 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
       }
       temp = temp.slice(0,temp.length-1)
 
-      temp+= ' | ' + authRange.hour_from.slice(0,5) + ' a ' + authRange.hour_to.slice(0,5)
+       if(authRange.hour_from && authRange.hour_to != null){
+
+        temp+= ' | ' +  authRange.hour_from.slice(0,5) + ' a ' + authRange.hour_to.slice(0,5)
+      } 
 
       res += temp + ' y '
     }

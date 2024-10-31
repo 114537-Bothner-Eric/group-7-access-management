@@ -13,12 +13,12 @@
       }"
              (input)="onDocNumberChange($event)" />
     </div>
-    <div>
-      <small class="text-danger ms-2" *ngIf="accessForm.get('doc_number')?.invalid && accessForm.get('doc_number')?.touched && !accessForm.get('doc_number')?.hasError('unauthorized')">
-        Requerido
+    <div class="ms-5 ps-2">
+      <small class="text-danger ms-5 ps-4" *ngIf="accessForm.get('doc_number')?.invalid && accessForm.get('doc_number')?.touched && !accessForm.get('doc_number')?.hasError('unauthorized')">
+        Por favor, ingrese el número de documento del visitante
       </small>
-      <small class="text-danger ms-2" *ngIf="accessForm.get('doc_number')?.hasError('unauthorized')">
-        Ingrese un documento registrado
+      <small class="text-danger ms-5 ps-4" *ngIf="accessForm.get('doc_number')?.hasError('unauthorized')">
+          Por favor, ingrese un número de documento registrado
       </small>
     </div>
   </div>
@@ -111,9 +111,9 @@
         'is-invalid': accessForm.get('vehicle_reg')?.invalid && accessForm.get('vehicle_reg')?.touched
       }"/>
     </div>
-    <div>
-      <small class="text-danger ms-2" *ngIf="accessForm.get('vehicle_reg')?.invalid && accessForm.get('vehicle_reg')?.touched">
-        Requerido
+    <div class="ms-5">
+      <small class="text-danger ms-4 ps-1" *ngIf="accessForm.get('vehicle_reg')?.invalid && accessForm.get('vehicle_reg')?.touched">
+          Por favor, ingrese la matrícula del vehículo
       </small>
     </div>
   </div>

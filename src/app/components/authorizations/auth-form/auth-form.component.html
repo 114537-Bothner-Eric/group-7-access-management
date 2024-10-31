@@ -14,9 +14,9 @@
         }
       </datalist>
     </div>
-    <div>
-      <small class="text-danger ms-2" *ngIf="authForm.get('plot_id')?.invalid && authForm.get('plot_id')?.touched">
-        Requerido
+    <div class="ms-5">
+      <small class="text-danger ms-5 ps-2" *ngIf="authForm.get('plot_id')?.invalid && authForm.get('plot_id')?.touched">
+          Por favor, ingrese un número de lote
       </small>
     </div>
   </div>
@@ -47,10 +47,10 @@
         'is-invalid': authForm.get('visitor_request.name')?.invalid && authForm.get('visitor_request.name')?.touched
       }"/>
       </div>
-      <div>
-        <small class="text-danger ms-2"
+      <div class="ms-5">
+        <small class="text-danger ms-5 ps-1"
                *ngIf="authForm.get('visitor_request.name')?.invalid && authForm.get('visitor_request.name')?.touched">
-          Requerido
+            Por favor, ingrese el nombre del visitante
         </small>
       </div>
     </div>
@@ -64,10 +64,10 @@
         'is-invalid': authForm.get('visitor_request.last_name')?.invalid && authForm.get('visitor_request.last_name')?.touched
       }"/>
       </div>
-      <div>
-        <small class="text-danger ms-2"
+      <div class="ms-5">
+        <small class="text-danger ms-5 ps-1"
                *ngIf="authForm.get('visitor_request.last_name')?.invalid && authForm.get('visitor_request.last_name')?.touched">
-          Requerido
+            Por favor, ingrese el apellido del visitante
         </small>
       </div>
     </div>
@@ -91,10 +91,10 @@
         'is-invalid': authForm.get('visitor_request')!.get('doc_number')?.invalid && authForm.get('visitor_request')!.get('doc_number')?.touched
       }"/>
       </div>
-      <div>
-        <small class="text-danger ms-2"
+      <div class="ms-5">
+        <small class="text-danger ms-5 ps-5"
                *ngIf="authForm.get('visitor_request.doc_number')?.invalid && authForm.get('visitor_request.doc_number')?.touched">
-          Requerido
+            Por favor, ingrese el número de documento del visitante
         </small>
       </div>
     </div>
@@ -102,15 +102,15 @@
     <div class="col-md-6 mt-3">
       <div class="d-flex align-items-center flex-row">
         <label for="birth-date" class="form-label m-0">Fecha de Nacimiento<label class="text-danger">*</label></label>
-        <input type="date" id="birth-date" class="form-control ms-2" formControlName="birth_date"
+        <input type="date" id="birth-date" class="form-control ms-1s" formControlName="birth_date"
                [ngClass]="{
         'is-invalid': authForm.get('visitor_request.birth_date')?.invalid && authForm.get('visitor_request.birth_date')?.touched
       }"/>
       </div>
-      <div>
-        <small class="text-danger ms-2"
+      <div class="ms-5">
+        <small class="text-danger ms-5 ps-4"
                *ngIf="authForm.get('visitor_request.birth_date')?.invalid && authForm.get('visitor_request.birth_date')?.touched">
-          Requerido
+            Por favor, ingrese la fecha de nacimiento del visitante
         </small>
       </div>
     </div>

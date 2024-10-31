@@ -1,90 +1,102 @@
-import {Component, inject, OnInit,} from '@angular/core';
-import {FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule, FormArray} from '@angular/forms';
-import {CommonModule, NgClass} from '@angular/common';
-import {DaysOfWeek} from '../../../models/authorizeRequest.model'
-import {AuthService} from "../../../services/auth.service";
-import {LoginService} from "../../../services/login.service";
+import { Component, inject, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormControl,
+  ReactiveFormsModule,
+  FormArray,
+} from '@angular/forms';
+import { CommonModule, NgClass } from '@angular/common';
+import { DaysOfWeek } from '../../../models/authorizeRequest.model';
+import { AuthService } from '../../../services/auth.service';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { LoginService } from '../../../services/login.service';
 import Swal from 'sweetalert2';
-import {NgIf} from "@angular/common";
-import {ActivatedRoute, Router} from "@angular/router";
-import {UserTypeService} from "../../../services/userType.service";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {RangeModalComponent} from "../range-modal/range-modal.component";
+import { NgIf } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserTypeService } from '../../../services/userType.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RangeModalComponent } from '../range-modal/range-modal.component';
 
 @Component({
   selector: 'app-auth-form',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    NgIf,
-    NgClass
-  ],
+  imports: [ReactiveFormsModule, NgIf, NgClass, NgSelectModule],
   templateUrl: './auth-form.component.html',
-  styleUrl: './auth-form.component.css'
+  styleUrl: './auth-form.component.css',
 })
 export class AuthFormComponent implements OnInit {
   authForm: FormGroup = {} as FormGroup;
-  plots: plot[] = []
-  plot: any = null
-  isUpdate = false
+  plots: plot[] = [];
+  plot: any = null;
+  isUpdate = false;
   paramRoutes = inject(ActivatedRoute);
   modalService = inject(NgbModal);
-  userType: string = "ADMIN"
+  userType: string = 'ADMIN';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router: Router, private userTypeService: UserTypeService, private route: ActivatedRoute) {
-  }
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private loginService: LoginService,
+    private router: Router,
+    private userTypeService: UserTypeService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.authForm = this.createForm();
-    this.initPlots()
+    this.initPlots();
 
-
-    this.userType = this.userTypeService.getType()
-    if (this.userType != "ADMIN") {
-      this.authForm.get('visitor_type')?.disable()
+    this.userType = this.userTypeService.getType();
+    if (this.userType != 'ADMIN') {
+      this.authForm.get('visitor_type')?.disable();
     }
     this.userTypeService.userType$.subscribe((userType: string) => {
-      this.userType = userType
-      if (this.userType != "ADMIN") {
-        this.authForm.get('visitor_type')?.setValue("VISITOR")
-        this.authForm.get('visitor_type')?.disable()
+      this.userType = userType;
+      if (this.userType != 'ADMIN') {
+        this.authForm.get('visitor_type')?.setValue('VISITOR');
+        this.authForm.get('visitor_type')?.disable();
       } else {
-        this.authForm.get('visitor_type')?.enable()
+        this.authForm.get('visitor_type')?.enable();
       }
     });
 
-    const documentParam = this.paramRoutes.snapshot.queryParamMap.get('doc_number');
+    const documentParam =
+      this.paramRoutes.snapshot.queryParamMap.get('doc_number');
     if (documentParam) {
-      this.isUpdate = true
-      this.authService.getByDocument(parseInt(documentParam, 10)).subscribe(datas => {
-        let data = datas[0]
-        // Completa el formulario
-        this.authForm.patchValue({
-          visitor_type: data.visitor_type,
-          plot_id: data.plot_id,
-          visitor_request: {
-            name: data.visitor.name,
-            last_name: data.visitor.last_name,
-            doc_type: data.visitor.doc_type,
-            doc_number: data.visitor.doc_number,
-            birth_date: this.formatDate(data.visitor.birth_date), // Asegúrate de formatear la fecha si es necesario
-          }
+      this.isUpdate = true;
+      this.authService
+        .getByDocument(parseInt(documentParam, 10))
+        .subscribe((datas) => {
+          let data = datas[0];
+          // Completa el formulario
+          this.authForm.patchValue({
+            visitor_type: data.visitor_type,
+            plot_id: data.plot_id,
+            visitor_request: {
+              name: data.visitor.name,
+              last_name: data.visitor.last_name,
+              doc_type: data.visitor.doc_type,
+              doc_number: data.visitor.doc_number,
+              birth_date: this.formatDate(data.visitor.birth_date), // Asegúrate de formatear la fecha si es necesario
+            },
+          });
+
+          // Completar auth_range_request
+          const authRanges = data.auth_ranges.map((range) => ({
+            auth_range_id: range.auth_range_id,
+            date_from: this.formatDate(range.date_from),
+            date_to: this.formatDate(range.date_to),
+            hour_from: range.hour_from,
+            hour_to: range.hour_to,
+            days_of_week: range.days_of_week,
+            comment: range.comment,
+            is_active: range.is_active,
+          }));
+
+          this.authForm.patchValue({ auth_range_request: authRanges });
         });
-
-        // Completar auth_range_request
-        const authRanges = data.auth_ranges.map(range => ({
-          auth_range_id: range.auth_range_id,
-          date_from: this.formatDate(range.date_from),
-          date_to: this.formatDate(range.date_to),
-          hour_from: range.hour_from,
-          hour_to: range.hour_to,
-          days_of_week: range.days_of_week,
-          comment: range.comment,
-          is_active: range.is_active
-        }));
-
-        this.authForm.patchValue({auth_range_request: authRanges});
-      });
     }
   }
 
@@ -108,14 +120,20 @@ export class AuthFormComponent implements OnInit {
         doc_number: [null, Validators.required],
         birth_date: [null, Validators.required],
       }),
-      auth_range_request: [[]]
+      auth_range_request: [[]],
     });
   }
 
   onSubmit() {
+
+
+    console.log(this.authForm.value);
+    return;
     if (this.authForm.valid) {
       const formData = this.authForm.value;
-      formData.visitor_request.birth_date = formatFormDate(formData.visitor_request.birth_date);
+      formData.visitor_request.birth_date = formatFormDate(
+        formData.visitor_request.birth_date
+      );
 
       const now = new Date();
 
@@ -136,59 +154,67 @@ export class AuthFormComponent implements OnInit {
       const dateFrom = formatDate(now);
       const dateTo = new Date(now.getTime() + 15 * 60000);
       const isNewDay = dateTo.getDate() !== now.getDate();
-      const finalDateFrom = isNewDay ? formatDate(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0)) : dateFrom;
+      const finalDateFrom = isNewDay
+        ? formatDate(
+            new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0)
+          )
+        : dateFrom;
 
       if (formData.auth_range_request.length === 0) {
         const authRange = {
           date_from: finalDateFrom,
           date_to: formatDate(dateTo),
-          hour_from: isNewDay ? "00:00:00" : formatTime(now),
+          hour_from: isNewDay ? '00:00:00' : formatTime(now),
           hour_to: formatTime(dateTo),
           days_of_week: [this.getDayOfWeek(now)],
-          comment: "Access for John Doe"
+          comment: 'Access for John Doe',
         };
 
         formData.auth_range_request = [authRange];
       }
 
       if (!this.isUpdate) {
-        this.authService.createAuth(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
-          Swal.fire({
-            title: 'Registro exitoso!',
-            text: 'Proceda a registrar el acceso',
-            icon: 'success',
-            showCancelButton: true,
-            confirmButtonText: 'Cerrar',
-            cancelButtonText: 'Ir a nuevo acceso',
-            customClass: {
-              confirmButton: 'btn btn-danger',
-              cancelButton: 'btn btn-primary'
-            }
-          }).then((result) => {
-            if (result.isDismissed) {
-              this.router.navigate(['/access/form']);
-            }
+        this.authService
+          .createAuth(formData, this.loginService.getLogin().id.toString())
+          .subscribe((data) => {
+            Swal.fire({
+              title: 'Registro exitoso!',
+              text: 'Proceda a registrar el acceso',
+              icon: 'success',
+              showCancelButton: true,
+              confirmButtonText: 'Cerrar',
+              cancelButtonText: 'Ir a nuevo acceso',
+              customClass: {
+                confirmButton: 'btn btn-danger',
+                cancelButton: 'btn btn-primary',
+              },
+            }).then((result) => {
+              if (result.isDismissed) {
+                this.router.navigate(['/access/form']);
+              }
+            });
           });
-        });
       } else {
-        this.authService.updateAuth(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
-          Swal.fire({
-            title: 'Actualización exitosa!',
-            text: '',
-            icon: 'success',
-            showCancelButton: true,
-            confirmButtonText: 'Cerrar',
-            cancelButtonText: 'Ir a autorizaciones',
-            customClass: {
-              confirmButton: 'btn btn-danger',
-              cancelButton: 'btn btn-primary'
-            }
-          }).then((result) => {
-            if (result.isDismissed) {
-              this.router.navigate(['/auth/list']);
-            }
+        this.authService
+          .updateAuth(formData, this.loginService.getLogin().id.toString())
+          .subscribe((data) => {
+            Swal.fire({
+              title: 'Actualización exitosa!',
+              text: '',
+              icon: 'success',
+              showCancelButton: true,
+              confirmButtonText: 'Cerrar',
+              cancelButtonText: 'Ir a autorizaciones',
+              customClass: {
+                confirmButton: 'btn btn-danger',
+                cancelButton: 'btn btn-primary',
+              },
+            }).then((result) => {
+              if (result.isDismissed) {
+                this.router.navigate(['/auth/list']);
+              }
+            });
           });
-        });
       }
     } else {
       this.markAllAsTouched();
@@ -196,18 +222,31 @@ export class AuthFormComponent implements OnInit {
   }
 
   getDayOfWeek(date: Date): string {
-    const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+    const days = [
+      'SUNDAY',
+      'MONDAY',
+      'TUESDAY',
+      'WEDNESDAY',
+      'THURSDAY',
+      'FRIDAY',
+      'SATURDAY',
+    ];
     return days[date.getDay()];
   }
 
   openModal() {
-    const modalRef = this.modalService.open(RangeModalComponent, {size: 'xl'});
-    modalRef.componentInstance.ranges = this.authForm.get('auth_range_request')?.value
-    modalRef.result.then((result) => {
-      this.authForm.get('auth_range_request')?.setValue(result)
-    }).catch((error) => {
-      console.error('Modal cerrado sin guardar cambios', error);
+    const modalRef = this.modalService.open(RangeModalComponent, {
+      size: 'xl',
     });
+    modalRef.componentInstance.ranges =
+      this.authForm.get('auth_range_request')?.value;
+    modalRef.result
+      .then((result) => {
+        this.authForm.get('auth_range_request')?.setValue(result);
+      })
+      .catch((error) => {
+        console.error('Modal cerrado sin guardar cambios', error);
+      });
   }
 
   onCancel() {
@@ -216,22 +255,22 @@ export class AuthFormComponent implements OnInit {
 
   initPlots() {
     this.plots = [
-      {id: 1, desc: "Andrés Torres", tel: "555-1234"},
-      {id: 2, desc: "Ana María", tel: "555-5678"},
-      {id: 3, desc: "Carlos Pérez", tel: "555-2345"},
-      {id: 4, desc: "Luisa Fernández", tel: "555-6789"},
-      {id: 5, desc: "Miguel Ángel", tel: "555-3456"},
-      {id: 6, desc: "Sofía Martínez", tel: "555-7890"},
-      {id: 7, desc: "David Gómez", tel: "555-4567"},
-      {id: 8, desc: "Isabel García", tel: "555-8901"},
-      {id: 9, desc: "Fernando López", tel: "555-5679"},
-      {id: 10, desc: "María José", tel: "555-6780"}
-    ]
+      { id: 1, desc: 'Andrés Torres', tel: '555-1234', name: '1 - Andrés Torres'},
+      { id: 2, desc: 'Ana María', tel: '555-5678', name: '2 - Ana María' },
+      { id: 3, desc: 'Carlos Pérez', tel: '555-2345', name: '3 - Carlos Pérez' },
+      { id: 4, desc: 'Luisa Fernández', tel: '555-6789', name: '4 - Luisa Fernández' },
+      { id: 5, desc: 'Miguel Ángel', tel: '555-3456', name: '5 - Miguel Ángel' },
+      { id: 6, desc: 'Sofía Martínez', tel: '555-7890', name: '6 - Sofía Martínez' },
+      { id: 7, desc: 'David Gómez', tel: '555-4567', name: '7 - David Gómez' },
+      { id: 8, desc: 'Isabel García', tel: '555-8901', name: '8 - Isabel García' },
+      { id: 9, desc: 'Fernando López', tel: '555-5679', name: '9 - Fernando López' },
+      { id: 10, desc: 'María José', tel: '555-6780', name: '10 - María José' },
+    ];
   }
 
   private markAllAsTouched(): void {
     // Marca todos los controles en el formulario principal
-    Object.values(this.authForm.controls).forEach(control => {
+    Object.values(this.authForm.controls).forEach((control) => {
       control.markAsTouched();
       // Si es un FormGroup, recorre sus controles
       if (control instanceof FormGroup) {
@@ -239,7 +278,7 @@ export class AuthFormComponent implements OnInit {
       }
       // Si es un FormArray, recorre sus controles
       if (control instanceof FormArray) {
-        control.controls.forEach(innerControl => {
+        control.controls.forEach((innerControl) => {
           innerControl.markAsTouched();
         });
       }
@@ -247,25 +286,30 @@ export class AuthFormComponent implements OnInit {
   }
 
   setPlot(id: number) {
-    this.plot = this.plots.filter(x => x.id == id)[0]
+    this.plot = this.plots.filter((x) => x.id == id)[0];
   }
 
-// Función recursiva para marcar todos los controles como tocados
+  // Función recursiva para marcar todos los controles como tocados
   private markAllAsTouchedRecursive(formGroup: FormGroup): void {
-    Object.values(formGroup.controls).forEach(control => {
+    Object.values(formGroup.controls).forEach((control) => {
       control.markAsTouched();
       if (control instanceof FormGroup) {
         this.markAllAsTouchedRecursive(control); // Llamada recursiva
       }
       if (control instanceof FormArray) {
-        control.controls.forEach(innerControl => {
+        control.controls.forEach((innerControl) => {
           innerControl.markAsTouched();
         });
       }
     });
   }
 
-
+  items = [
+    { id: 1, name: 'Item 1' },
+    { id: 2, name: 'Item 2' },
+    { id: 3, name: 'Item 3' },
+  ];
+  selectedItem: any;
 }
 
 function formatFormDate(inputDate: string): string {
@@ -284,7 +328,8 @@ function formatFormDate(inputDate: string): string {
 }
 
 export interface plot {
-  id: number,
-  desc: string,
-  tel: string
+  id: number;
+  desc: string;
+  tel: string;
+  name: string;
 }

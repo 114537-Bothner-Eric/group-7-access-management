@@ -6,7 +6,7 @@ import {UserType, UserTypeService} from "../../../services/userType.service";
 @Component({
   selector: 'app-navbar',
   standalone: true,
-    imports: [RouterLink, FormsModule, ReactiveFormsModule],
+  imports: [RouterLink, FormsModule, ReactiveFormsModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })

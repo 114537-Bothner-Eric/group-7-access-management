@@ -14,6 +14,7 @@ import {AccessActionDictionary, AccessModel} from "../../../models/access.model"
 import {AccessService} from "../../../services/access.service";
 import {TransformResponseService} from "../../../services/transform-response.service";
 import { CadastreExcelService } from '../../../services/cadastre-excel.service';
+import {UserTypeService} from "../../../services/userType.service";
 
 @Component({
   selector: 'app-auth-list',
@@ -41,11 +42,13 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
   private authorizerCompleterService = inject(AuthorizerCompleterService)
   private toastService = inject(ToastService)
   private modalService = inject(NgbModal)
+  private userTypeService = inject(UserTypeService)
   //#endregion
 
   //#region ATT de PAGINADO
   currentPage: number = 0
   pageSize: number = 10
+  userType: string = "ADMIN"
   sizeOptions: number[] = [10, 25, 50]
   list: Auth[] = [];
   completeList: [] = [];
@@ -94,6 +97,10 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
    this.filterComponent.filter$.subscribe((filter: string) => {
      this.getAllFiltered(filter)
+    });
+    this.userType = this.userTypeService.getType()
+    this.userTypeService.userType$.subscribe((userType: string) => {
+      this.userType = userType
     });
   }
 
@@ -391,4 +398,8 @@ export class AuthListComponent  implements OnInit, AfterViewInit {
   onInfoButtonClick() {
     this.modalService.open(this.infoModal, { size: 'lg' });
     }
+
+  edit(doc_number: number) {
+    this.router.navigate(['/auth/form'], { queryParams: { doc_number: doc_number } });
+  }
 }

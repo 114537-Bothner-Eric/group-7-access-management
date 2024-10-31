@@ -11,7 +11,7 @@ import {
   CadastrePlotFilterButtonsComponent
 } from "../cadastre-access-filter-buttons/cadastre-plot-filter-buttons.component";
 import {NgbModal, NgbPagination} from "@ng-bootstrap/ng-bootstrap";
-import {MainContainerComponent, TableComponent, ToastService} from "ngx-dabd-grupo01";
+import {MainContainerComponent, TableComponent} from "ngx-dabd-grupo01";
 import {PaginatedResponse} from "../../../models/api-response";
 import {TransformResponseService} from "../../../services/transform-response.service";
 
@@ -42,7 +42,7 @@ export class AccessListComponent implements OnInit, AfterViewInit {
   private accessService = inject(AccessService)
   private transformResponseService = inject(TransformResponseService)
   private authorizerCompleterService = inject(AuthorizerCompleterService)
-  private toastService = inject(ToastService)
+ // private toastService = inject(ToastService)
   private modalService = inject(NgbModal)
   //#endregion
 
@@ -157,8 +157,7 @@ export class AccessListComponent implements OnInit, AfterViewInit {
   }
   filterByDate(date_from: Date, date_to: Date) {
     if((new Date(new Date(date_from+"T00:00:00"))) > (new Date(new Date(date_to+"T00:00:00")))){
-      console.log("aaa")
-      this.toastService.sendError("La fecha hasta debe ser menor o igual a la fecha desde")
+      alert("aa")
       return
     }
     this.accessService.getAll(this.currentPage, this.pageSize, this.retrieveByActive).subscribe(data => {

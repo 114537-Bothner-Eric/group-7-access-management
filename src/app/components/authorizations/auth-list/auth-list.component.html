@@ -54,24 +54,6 @@
           }
         </div>
       </div>
-
-
-      <!--      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-              <input type="radio" class="btn-check"
-                     name="btnradio" id="btnradio1"
-                     autocomplete="off" (change)="changeActiveFilter(true)" checked>
-              <label class="btn btn-outline-primary" for="btnradio1">Lotes Activos</label>
-
-              <input type="radio" class="btn-check"
-                     name="btnradio" id="btnradio2"
-                     autocomplete="off" (change)="changeActiveFilter(false)">
-              <label class="btn btn-outline-primary" for="btnradio2">Lotes Inactivos</label>
-
-              <input type="radio" class="btn-check"
-                     name="btnradio" id="btnradio3"
-                     autocomplete="off" (change)="changeActiveFilter()">
-              <label class="btn btn-outline-primary" for="btnradio3">Todos</label>
-            </div>-->
     </div>
 
     <div class="table-container">
@@ -84,6 +66,10 @@
           <th scope="col">Tipo</th>
           <th scope="col">Horarios</th>
           <th scope="col">Autorizador</th>
+          @if (userType == "ADMIN"|| userType == "OWNER"){
+            <th scope="col">Activo</th>
+            <th scope="col">Acciones</th>
+          }
         </tr>
         </thead>
         <tbody>
@@ -110,6 +96,23 @@
                 <!--TODO icono-->
                 {{ item.authorizer.name + ' ' + item.authorizer.last_name }}
               </td>
+              @if (userType == "ADMIN" || userType == "OWNER"){
+                  <td>
+                    @if (item.is_active) {
+                      <p class="mb-0">
+                        <i class="bi bi-check2-circle text-success" style="font-size: 1.5rem;"></i>
+                      </p>
+                    } @else {
+                      <p class="mb-0">
+                        <i class="bi bi-x-circle text-danger" style="font-size: 1.5rem;"></i>
+                      </p>
+                    }
+                  </td>
+              <td>
+                <button class="btn btn-warning"> <i class="bi bi-pencil" (click)="edit(item.visitor.doc_number)"></i></button>
+                <button class="btn btn-danger ms-1"> <i class="bi bi-trash"></i></button>
+              </td>
+              }
             </tr>
 
           }
@@ -168,7 +171,7 @@
           <h5 class="alert-heading">¿Qué es esta pantalla?</h5>
           <p class="mb-0 small">Esta pantalla te permite visualizar y gestionar las autorizaciones para visitantes registrados en distintos lotes. Puedes acceder rápidamente a los detalles de cada autorización, aplicar filtros, y realizar acciones específicas sobre cada registro.</p>
         </div>
-  
+
         <!-- Campos Principales -->
         <div class="card mb-2">
           <div class="card-header py-1">
@@ -191,7 +194,7 @@
             </ul>
           </div>
         </div>
-  
+
         <!-- Acciones -->
         <div class="card mb-2">
           <div class="card-header py-1">
@@ -208,7 +211,7 @@
             </ul>
           </div>
         </div>
-  
+
         <!-- Nota (OPCIONAL) -->
         <div class="alert alert-warning py-2 mb-0">
           <h5 class="alert-heading">Nota:</h5>

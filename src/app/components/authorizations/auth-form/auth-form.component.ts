@@ -7,6 +7,9 @@ import {LoginService} from "../../../services/login.service";
 import Swal from 'sweetalert2';
 import {NgIf} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
+import {UserTypeService} from "../../../services/userType.service";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {RangeModalComponent} from "../range-modal/range-modal.component";
 
 @Component({
   selector: 'app-auth-form',
@@ -21,34 +24,77 @@ import {ActivatedRoute, Router} from "@angular/router";
 })
 export class AuthFormComponent implements OnInit {
   authForm: FormGroup = {} as FormGroup;
-  plots: any[] = []
- paramRoutes = inject(ActivatedRoute);
+  plots: plot[] = []
+  plot: any = null
+  isUpdate = false
+  paramRoutes = inject(ActivatedRoute);
+  modalService = inject(NgbModal);
+  userType: string = "ADMIN"
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private loginService: LoginService, private router: Router, private userTypeService: UserTypeService, private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
     this.authForm = this.createForm();
-    this.authForm.get('visitor_type')?.disable()
     this.initPlots()
 
+
+    this.userType = this.userTypeService.getType()
+    if (this.userType != "ADMIN") {
+      this.authForm.get('visitor_type')?.disable()
+    }
+    this.userTypeService.userType$.subscribe((userType: string) => {
+      this.userType = userType
+      if (this.userType != "ADMIN") {
+        this.authForm.get('visitor_type')?.setValue("VISITOR")
+        this.authForm.get('visitor_type')?.disable()
+      } else {
+        this.authForm.get('visitor_type')?.enable()
+      }
+    });
+
     const documentParam = this.paramRoutes.snapshot.queryParamMap.get('doc_number');
-    debugger
     if (documentParam) {
-      this.authForm.get('visitor_request.doc_number')?.patchValue(documentParam);
+      this.isUpdate = true
+      this.authService.getByDocument(parseInt(documentParam, 10)).subscribe(datas => {
+        let data = datas[0]
+        // Completa el formulario
+        this.authForm.patchValue({
+          visitor_type: data.visitor_type,
+          plot_id: data.plot_id,
+          visitor_request: {
+            name: data.visitor.name,
+            last_name: data.visitor.last_name,
+            doc_type: data.visitor.doc_type,
+            doc_number: data.visitor.doc_number,
+            birth_date: this.formatDate(data.visitor.birth_date), // Asegúrate de formatear la fecha si es necesario
+          }
+        });
+
+        // Completar auth_range_request
+        const authRanges = data.auth_ranges.map(range => ({
+          auth_range_id: range.auth_range_id,
+          date_from: this.formatDate(range.date_from),
+          date_to: this.formatDate(range.date_to),
+          hour_from: range.hour_from,
+          hour_to: range.hour_to,
+          days_of_week: range.days_of_week,
+          comment: range.comment,
+          is_active: range.is_active
+        }));
+
+        this.authForm.patchValue({auth_range_request: authRanges});
+      });
     }
   }
 
-  get authRangeRequests(): FormArray {
-    return this.authForm.get('auth_range_request') as FormArray;
-  }
-
-  addAuthRange(): void {
-    this.authRangeRequests.push(this.createAuthRange());
-  }
-
-  removeAuthRange(index: number): void {
-    this.authRangeRequests.removeAt(index);
+  formatDate(dateString: string) {
+    const parts = dateString.split('-'); // Divide la cadena en partes
+    // Asegúrate de que el formato sea correcto (DD-MM-YYYY)
+    if (parts.length === 3) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`; // Retorna YYYY-MM-DD
+    }
+    return dateString;
   }
 
   createForm(): FormGroup {
@@ -62,25 +108,13 @@ export class AuthFormComponent implements OnInit {
         doc_number: [null, Validators.required],
         birth_date: [null, Validators.required],
       }),
-      auth_range_request: this.fb.array([])
-    });
-  }
-
-  createAuthRange(): FormGroup {
-    return this.fb.group({
-      date_from: [null, Validators.required],
-      date_to: [null, Validators.required],
-      hour_from: ['00:00', Validators.required],
-      hour_to: ['23:59', Validators.required],
-      days_of_week: [[], Validators.required],
-      comment: ['']
+      auth_range_request: [[]]
     });
   }
 
   onSubmit() {
     if (this.authForm.valid) {
       const formData = this.authForm.value;
-      formData.visitor_type = 'VISITOR';
       formData.visitor_request.birth_date = formatFormDate(formData.visitor_request.birth_date);
 
       const now = new Date();
@@ -104,35 +138,58 @@ export class AuthFormComponent implements OnInit {
       const isNewDay = dateTo.getDate() !== now.getDate();
       const finalDateFrom = isNewDay ? formatDate(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0)) : dateFrom;
 
-      const authRange = {
-        date_from: finalDateFrom,
-        date_to: formatDate(dateTo),
-        hour_from: isNewDay ? "00:00:00" : formatTime(now),
-        hour_to: formatTime(dateTo),
-        days_of_week: [this.getDayOfWeek(now)],
-        comment: "Access for John Doe"
-      };
+      if (formData.auth_range_request.length === 0) {
+        const authRange = {
+          date_from: finalDateFrom,
+          date_to: formatDate(dateTo),
+          hour_from: isNewDay ? "00:00:00" : formatTime(now),
+          hour_to: formatTime(dateTo),
+          days_of_week: [this.getDayOfWeek(now)],
+          comment: "Access for John Doe"
+        };
 
-      formData.auth_range_request = [authRange];
+        formData.auth_range_request = [authRange];
+      }
 
-      this.authService.createAuth(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
-        Swal.fire({
-          title: 'Registro exitoso!',
-          text: 'Proceda a registrar el acceso',
-          icon: 'success',
-          showCancelButton: true,
-          confirmButtonText: 'Cerrar',
-          cancelButtonText: 'Ir a nuevo acceso',
-          customClass: {
-            confirmButton: 'btn btn-danger',
-            cancelButton: 'btn btn-primary'
-          }
-        }).then((result) => {
-          if (result.isDismissed) {
-            this.router.navigate(['/access/form']);
-          }
+      if (!this.isUpdate) {
+        this.authService.createAuth(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
+          Swal.fire({
+            title: 'Registro exitoso!',
+            text: 'Proceda a registrar el acceso',
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Cerrar',
+            cancelButtonText: 'Ir a nuevo acceso',
+            customClass: {
+              confirmButton: 'btn btn-danger',
+              cancelButton: 'btn btn-primary'
+            }
+          }).then((result) => {
+            if (result.isDismissed) {
+              this.router.navigate(['/access/form']);
+            }
+          });
         });
-      });
+      } else {
+        this.authService.updateAuth(formData, this.loginService.getLogin().id.toString()).subscribe(data => {
+          Swal.fire({
+            title: 'Actualización exitosa!',
+            text: '',
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Cerrar',
+            cancelButtonText: 'Ir a autorizaciones',
+            customClass: {
+              confirmButton: 'btn btn-danger',
+              cancelButton: 'btn btn-primary'
+            }
+          }).then((result) => {
+            if (result.isDismissed) {
+              this.router.navigate(['/auth/list']);
+            }
+          });
+        });
+      }
     } else {
       this.markAllAsTouched();
     }
@@ -143,6 +200,15 @@ export class AuthFormComponent implements OnInit {
     return days[date.getDay()];
   }
 
+  openModal() {
+    const modalRef = this.modalService.open(RangeModalComponent, {size: 'xl'});
+    modalRef.componentInstance.ranges = this.authForm.get('auth_range_request')?.value
+    modalRef.result.then((result) => {
+      this.authForm.get('auth_range_request')?.setValue(result)
+    }).catch((error) => {
+      console.error('Modal cerrado sin guardar cambios', error);
+    });
+  }
 
   onCancel() {
     this.router.navigate(['/auth/list']);
@@ -150,16 +216,16 @@ export class AuthFormComponent implements OnInit {
 
   initPlots() {
     this.plots = [
-      { id: 1, desc: "Andrés Torres" },
-      { id: 2, desc: "Ana María" },
-      { id: 3, desc: "Carlos Pérez" },
-      { id: 4, desc: "Luisa Fernández" },
-      { id: 5, desc: "Miguel Ángel" },
-      { id: 6, desc: "Sofía Martínez" },
-      { id: 7, desc: "David Gómez" },
-      { id: 8, desc: "Isabel García" },
-      { id: 9, desc: "Fernando López" },
-      { id: 10, desc: "María José" }
+      {id: 1, desc: "Andrés Torres", tel: "555-1234"},
+      {id: 2, desc: "Ana María", tel: "555-5678"},
+      {id: 3, desc: "Carlos Pérez", tel: "555-2345"},
+      {id: 4, desc: "Luisa Fernández", tel: "555-6789"},
+      {id: 5, desc: "Miguel Ángel", tel: "555-3456"},
+      {id: 6, desc: "Sofía Martínez", tel: "555-7890"},
+      {id: 7, desc: "David Gómez", tel: "555-4567"},
+      {id: 8, desc: "Isabel García", tel: "555-8901"},
+      {id: 9, desc: "Fernando López", tel: "555-5679"},
+      {id: 10, desc: "María José", tel: "555-6780"}
     ]
   }
 
@@ -178,6 +244,10 @@ export class AuthFormComponent implements OnInit {
         });
       }
     });
+  }
+
+  setPlot(id: number) {
+    this.plot = this.plots.filter(x => x.id == id)[0]
   }
 
 // Función recursiva para marcar todos los controles como tocados
@@ -211,4 +281,10 @@ function formatFormDate(inputDate: string): string {
 
   // Devolver la fecha en el formato dd-MM-yyyy
   return `${day}-${month}-${year}`;
+}
+
+export interface plot {
+  id: number,
+  desc: string,
+  tel: string
 }

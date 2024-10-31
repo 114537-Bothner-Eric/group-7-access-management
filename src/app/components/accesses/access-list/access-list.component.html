@@ -1,3 +1,4 @@
+
 <h1>Lista de Accesos</h1>
 <div class="card-body">
   <!-- ESTE COMPONENTE LO VAN A TENER QUE MODIFICAR ES EL DEL BUSCAR, EXPORTAR, ETC -->
@@ -111,9 +112,9 @@
             </td>
             <td>
                 @if (item.action === "ENTRY") {
-                    <span class="badge text-bg-success">{{ translateTable(item.action, actionDictionary) }}</span>
+                    <span class="badge badge-success badge-outlined">{{ translateTable(item.action, actionDictionary) }}</span>
                 } @else {
-                    <span class="badge text-bg-danger">{{ translateTable(item.action, actionDictionary) }}</span>
+                    <span class="badge badge-danger badge-outlined">{{ translateTable(item.action, actionDictionary) }}</span>
                 }
             </td>
             <td>
@@ -239,5 +240,3 @@
     <button type="button" class="btn btn-primary" (click)="modal.close()">Entendido</button>
   </div>
 </ng-template>
-
-
